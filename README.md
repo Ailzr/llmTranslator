@@ -1,0 +1,1 @@
+使用fyne完成gui，调用本地paddle-ocr和ollama提供的llm api进行翻译
