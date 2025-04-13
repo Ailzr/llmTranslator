@@ -1,0 +1,36 @@
+{
+  "capture": {
+    "end_x": 1819,
+    "end_y": 799,
+    "start_x": 1448,
+    "start_y": 754
+  },
+  "llm": {
+    "api_key": "",
+    "api_secret": "",
+    "base_url": {
+      "ollama": "http://localhost:11434"
+    },
+    "max_response_time": 180,
+    "max_tokens": 2000,
+    "model": "mistral:latest",
+    "provider": "ollama",
+    "support": [
+      "deepseek-r1:8b",
+      "mistral:latest"
+    ],
+    "temperature": 0.5
+  },
+  "ocr": {
+    "api_key": "",
+    "base_url": {
+      "paddle-ocr": "http://localhost:5000"
+    },
+    "engine": "paddle-ocr",
+    "lang": "japan"
+  },
+  "ui": {
+    "theme": "dark"
+  },
+  "version": "1.0.0"
+}
