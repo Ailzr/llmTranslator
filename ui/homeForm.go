@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2/widget"
 	"llmTranslator/pkg/llm"
-	"llmTranslator/pkg/ocr"
 )
 
 func createHomeForm(mw *MainWindow) *widget.Form {
@@ -26,15 +25,8 @@ func createHomeForm(mw *MainWindow) *widget.Form {
 	translateText := widget.NewLabel("")
 
 	translateBtn := widget.NewButton("翻译", func() {
-		translateText.SetText("翻译中...")
 		mw.App.Driver().DoFromGoroutine(func() {
-			text := ocr.GetOCRResult()
-			if text == "" {
-				translateText.SetText("未识别到文字")
-				return
-			}
-			result := llm.Translate(text, "zh")
-			translateText.SetText(result)
+			mw.Translate()
 		}, false)
 	})
 
