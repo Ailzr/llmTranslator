@@ -19,6 +19,11 @@ type OCRResponse struct {
 	Text string `json:"text"`
 }
 
+func ocrTestByPaddle() bool {
+	//TODO Paddle-OCR测试
+	return true
+}
+
 // 通过文件上传调用OCR
 func ocrByPaddle(filePath, lang string) string {
 
