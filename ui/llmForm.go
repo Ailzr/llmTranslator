@@ -1,20 +1,23 @@
 package ui
 
 import (
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 	"github.com/spf13/viper"
 	"llmTranslator/logHelper"
 	"slices"
 )
 
+// 创建LLM表单
 func createLLMForm() *widget.Form {
-	var form *widget.Form
+	form := &widget.Form{}
 
 	// LLM提供者选择器
 	providerSelector := widget.NewSelect([]string{"ollama"}, func(s string) {
 		viper.Set("llm.provider", s)
 	})
 	providerSelector.SetSelected(viper.GetString("llm.provider"))
+	form.AppendItem(widget.NewFormItem("LLM提供者", providerSelector))
 
 	// 模型输入框
 	modelInput := widget.NewEntry()
@@ -27,6 +30,9 @@ func createLLMForm() *widget.Form {
 		} else {
 			modelInput.Disable()
 		}
+		fyne.Do(func() {
+			form.Refresh()
+		})
 	})
 	modelInputOpen.Checked = false
 
@@ -38,29 +44,25 @@ func createLLMForm() *widget.Form {
 	})
 	modelSelector.SetSelected(viper.GetString("llm.model"))
 
-	form = &widget.Form{
-		Items: []*widget.FormItem{
-			{Text: "LLM提供者", Widget: providerSelector},
-			{Text: "模型", Widget: modelSelector},
-			{Text: "自定义模型", Widget: modelInputOpen},
-			{Text: "模型名称", Widget: modelInput},
-		},
-		SubmitText: "保存设置",
-		OnSubmit: func() {
-			if modelInputOpen.Checked && modelInput.Text != "" {
-				useCustomModel(modelInput, modelSelector)
-			}
-			err := viper.WriteConfig()
-			if err != nil {
-				logHelper.Error("保存配置失败: " + err.Error())
-				logHelper.WriteLog("保存配置失败: " + err.Error())
-				return
-			}
-		},
-		CancelText: "取消",
-		OnCancel: func() {
-			resetLLMForm(providerSelector, modelSelector, modelInput, modelInputOpen)
-		},
+	form.AppendItem(widget.NewFormItem("模型", modelSelector))
+	form.AppendItem(widget.NewFormItem("自定义模型", modelInputOpen))
+	form.AppendItem(widget.NewFormItem("模型名称", modelInput))
+
+	form.SubmitText = "保存设置"
+	form.OnSubmit = func() {
+		if modelInputOpen.Checked && modelInput.Text != "" {
+			useCustomModel(modelInput, modelSelector)
+		}
+		err := viper.WriteConfig()
+		if err != nil {
+			logHelper.Error("保存配置失败: " + err.Error())
+			logHelper.WriteLog("保存配置失败: " + err.Error())
+			return
+		}
+	}
+	form.CancelText = "取消"
+	form.OnCancel = func() {
+		resetLLMForm(providerSelector, modelSelector, modelInput, modelInputOpen)
 	}
 
 	return form

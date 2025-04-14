@@ -1,13 +1,17 @@
 package ui
 
 import (
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 	"github.com/spf13/viper"
+	"llmTranslator/logHelper"
 )
 
+// 创建OCR表单
 func createOCRForm() *widget.Form {
 
-	var form *widget.Form
+	//创建表单
+	form := &widget.Form{}
 
 	//设置语言下拉框
 	langCombo := widget.NewSelect(
@@ -21,53 +25,79 @@ func createOCRForm() *widget.Form {
 				viper.Set("ocr.lang", "japan")
 			}
 		})
+	//获取当前设置的语言
 	langSet := viper.GetString("ocr.lang")
+	//根据当前设置的语言设置下拉框的选中项
 	switch langSet {
 	case "japan":
 		langCombo.SetSelected("日语")
 	case "en":
 		langCombo.SetSelected("英语")
 	}
+	//将语言下拉框添加到表单中
+	form.AppendItem(widget.NewFormItem("需要翻译的语言", langCombo))
 
+	//创建API Key输入框
 	apiKeyEntry := widget.NewEntry()
+	//获取当前设置的API Key
 	apiKeySet := viper.GetString("ocr.api_key")
+	//设置API Key输入框的占位符
 	apiKeyEntry.SetPlaceHolder("请输入API Key")
+	//设置API Key输入框的文本
 	apiKeyEntry.SetText(apiKeySet)
+	//禁用API Key输入框
 	apiKeyEntry.Disabled()
 
-	//设置ocr引擎下拉框
-	ocrEngineCombo := widget.NewSelect(
+	//设置ocr提供者下拉框
+	ocrProviderCombo := widget.NewSelect(
 		[]string{"paddle-ocr", "baidu-ocr"}, func(s string) {
 			switch s {
 			case "paddle-ocr":
-				viper.Set("ocr.engine", "paddle-ocr")
+				viper.Set("ocr.provider", "paddle-ocr")
+				//禁用API Key输入框
 				apiKeyEntry.Disable()
 			case "baidu-ocr":
-				viper.Set("ocr.engine", "baidu-ocr")
+				viper.Set("ocr.provider", "baidu-ocr")
+				//启用API Key输入框
 				apiKeyEntry.Enable()
 			default:
-				viper.Set("ocr.engine", "paddle-ocr")
+				viper.Set("ocr.provider", "paddle-ocr")
+				//禁用API Key输入框
+				apiKeyEntry.Disable()
+				//记录错误日志
+				logHelper.Error("未知的ocr提供者")
+				logHelper.WriteLog("未知的ocr提供者")
 			}
+			//刷新表单
+			fyne.Do(func() {
+				form.Refresh()
+			})
 		})
-	ocrEngineCombo.SetSelected(viper.GetString("ocr.engine"))
+	//设置ocr提供者下拉框的选中项
+	ocrProviderCombo.SetSelected(viper.GetString("ocr.engine"))
+	//将ocr提供者下拉框添加到表单中
+	form.AppendItem(widget.NewFormItem("OCR提供者", ocrProviderCombo))
+	//将API Key输入框添加到表单中
+	form.AppendItem(widget.NewFormItem("API KEY", apiKeyEntry))
 
-	form = &widget.Form{
-		Items: []*widget.FormItem{
-			{Text: "需要翻译的语言", Widget: langCombo},
-			{Text: "OCR引擎", Widget: ocrEngineCombo},
-			{Text: "API KEY", Widget: apiKeyEntry},
-		},
-		SubmitText: "保存设置",
-		OnSubmit: func() {
-			viper.Set("ocr.api_key", apiKeyEntry.Text)
-			_ = viper.WriteConfig()
-		},
-		CancelText: "取消",
-		OnCancel: func() {
-			reserOCRForm(langCombo, ocrEngineCombo, apiKeyEntry)
-		},
+	//设置表单的提交按钮文本
+	form.SubmitText = "保存设置"
+	//设置表单的提交事件
+	form.OnSubmit = func() {
+		//保存API Key
+		viper.Set("ocr.api_key", apiKeyEntry.Text)
+		//写入配置文件
+		_ = viper.WriteConfig()
+	}
+	//设置表单的取消按钮文本
+	form.CancelText = "取消"
+	//设置表单的取消事件
+	form.OnCancel = func() {
+		//重置表单
+		reserOCRForm(langCombo, ocrProviderCombo, apiKeyEntry)
 	}
 
+	//返回表单
 	return form
 }
 
@@ -91,7 +121,7 @@ func reserOCRForm(langCombo *widget.Select, ocrEngineCombo *widget.Select, apiKe
 	}
 
 	// 3. 恢复OCR引擎选择框
-	engineSet := viper.GetString("ocr.engine")
+	engineSet := viper.GetString("ocr.provider")
 	switch engineSet {
 	case "paddle-ocr":
 		ocrEngineCombo.SetSelected("paddle-ocr")
