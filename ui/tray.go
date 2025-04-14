@@ -20,6 +20,14 @@ func startTray(mw *MainWindow) {
 	// 将关闭按钮修改为隐藏
 	mw.Window.SetCloseIntercept(func() {
 		mw.Window.Hide()
+
+		//将托盘状态设置为true
+		mw.isTray = true
+	})
+
+	// 将翻译结果展示窗口的关闭按钮也修改为隐藏
+	mw.TranslatorWindow.SetCloseIntercept(func() {
+		mw.TranslatorWindow.Hide()
 	})
 
 }

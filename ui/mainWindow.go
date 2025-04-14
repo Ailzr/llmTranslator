@@ -12,10 +12,11 @@ import (
 const ipcPort = "127.0.0.1:23258"
 
 type MainWindow struct {
-	App              fyne.App
-	Window           fyne.Window
-	Listener         net.Listener
-	TranslatorWindow fyne.Window
+	App              fyne.App     //应用程序
+	Listener         net.Listener //防止重复启动应用的监听器
+	Window           fyne.Window  //主窗口
+	TranslatorWindow fyne.Window  //翻译展示窗口
+	isTray           bool         //是否启用系统托盘
 }
 
 var mw = &MainWindow{}
@@ -26,6 +27,7 @@ func init() {
 	mw.App = app.New()
 	//mw.App.Settings().SetTheme(&customTheme{})
 	mw.Window = mw.App.NewWindow("llmTranslator")
+	mw.isTray = false
 
 	//设置为主窗口
 	mw.Window.SetMaster()
@@ -42,9 +44,6 @@ func init() {
 		sendActivateSignal()
 		os.Exit(0)
 	}
-
-	//系统托盘
-	startTray(mw)
 
 	//监听激活信号
 	go listenForActivateSignal(mw)
@@ -86,6 +85,9 @@ func init() {
 	mw.Window.SetContent(tabs)
 	mw.Window.Show()
 	mw.CreateShowWindow()
+
+	//系统托盘
+	startTray(mw)
 }
 
 func GetMainWindow() *MainWindow {
