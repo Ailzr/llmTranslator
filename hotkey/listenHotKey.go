@@ -34,9 +34,7 @@ func AddCaptureRectangleHotKey(mw *ui.MainWindow) {
 	} else {
 		go func() {
 			for range hk.Keydown() {
-				mw.App.Driver().DoFromGoroutine(func() {
-					mw.CaptureRectangle()
-				}, false)
+				mw.CaptureRectangle()
 			}
 		}()
 	}

@@ -13,74 +13,90 @@ import (
 	"image/color"
 	"llmTranslator/logHelper"
 	"llmTranslator/utils"
+	"time"
 )
 
+var w fyne.Window
+
 func (mw *MainWindow) CaptureRectangle() {
-	img, err := utils.CaptureAllScreen()
-	if err != nil {
-		logHelper.Error(err.Error())
-		logHelper.WriteLog(err.Error())
-		return
-	}
+	fyne.DoAndWait(func() {
+		w = mw.App.NewWindow("截屏")
+		w.SetFullScreen(true)
+		w.SetPadded(false)
 
-	w := mw.App.NewWindow("截屏")
-	w.SetFullScreen(true)
-	w.SetPadded(false)
-
-	//截图前将主窗口和翻译窗口隐藏
-	if !mw.isTray {
-		mw.Window.Hide()
-	}
-	mw.TranslatorWindow.Hide()
-
-	bg := canvas.NewImageFromImage(img)
-	bg.FillMode = canvas.ImageFillStretch
-
-	// 准备 overlay
-	result := make(chan image.Rectangle)
-	overlay := newSelectOverlay(result)
-
-	w.SetContent(container.NewStack(bg, overlay))
-
-	w.Canvas().(desktop.Canvas).SetOnKeyDown(func(e *fyne.KeyEvent) {
-		switch e.Name {
-		case fyne.KeyEscape:
-			w.Close()
+		//截图前将主窗口和翻译窗口隐藏
+		if !mw.isTray {
+			mw.Window.Hide()
 		}
+		mw.TranslatorWindow.Hide()
 	})
 
-	//重新显示主窗口和翻译窗口
-	if !mw.isTray {
-		mw.Window.Show()
-	}
-	mw.TranslatorWindow.Show()
-
-	w.Show()
 	go func() {
-		sel := <-result
-		dialog.ShowConfirm("确认选区",
-			fmt.Sprintf("是否使用坐标 %v ？", sel),
-			func(ok bool) {
-				if ok {
-					w.Close()
-					//将选取到的坐标保存起来
-					viper.Set("capture.start_x", sel.Min.X)
-					viper.Set("capture.start_y", sel.Min.Y)
-					viper.Set("capture.end_x", sel.Max.X)
-					viper.Set("capture.end_y", sel.Max.Y)
-					err := viper.WriteConfig()
-					if err != nil {
-						logHelper.Error(err.Error())
-						logHelper.WriteLog(err.Error())
+		time.Sleep(300 * time.Millisecond)
+		img, err := utils.CaptureAllScreen()
+		if err != nil {
+			logHelper.Error(err.Error())
+			logHelper.WriteLog(err.Error())
+			return
+		}
+
+		bg := canvas.NewImageFromImage(img)
+		bg.FillMode = canvas.ImageFillStretch
+
+		// 准备 overlay
+		result := make(chan image.Rectangle)
+		overlay := newSelectOverlay(result)
+
+		fyne.DoAndWait(func() {
+			w.SetContent(container.NewStack(bg, overlay))
+		})
+
+		w.Canvas().(desktop.Canvas).SetOnKeyDown(func(e *fyne.KeyEvent) {
+			switch e.Name {
+			case fyne.KeyEscape:
+				w.Close()
+			}
+		})
+
+		fyne.Do(func() {
+			w.Show()
+			//重新显示主窗口和翻译窗口
+			if !mw.isTray {
+				mw.Window.Show()
+			}
+			mw.TranslatorWindow.Show()
+		})
+
+		go func() {
+			sel := <-result
+			dialog.ShowConfirm("确认选区",
+				fmt.Sprintf("是否使用坐标 %v ？", sel),
+				func(ok bool) {
+					if ok {
+						fyne.Do(func() {
+							w.Close()
+						})
+						//将选取到的坐标保存起来
+						viper.Set("capture.start_x", sel.Min.X)
+						viper.Set("capture.start_y", sel.Min.Y)
+						viper.Set("capture.end_x", sel.Max.X)
+						viper.Set("capture.end_y", sel.Max.Y)
+						err := viper.WriteConfig()
+						if err != nil {
+							logHelper.Error(err.Error())
+							logHelper.WriteLog(err.Error())
+						}
+						mw.CreateShowWindow()
+					} else {
+						// 用户取消，只隐藏选区框，允许重新框选
+						fyne.Do(func() {
+							w.Close()
+						})
 					}
-					mw.CreateShowWindow()
-				} else {
-					// 用户取消，只隐藏选区框，允许重新框选
-					w.Close()
-				}
-			},
-			w,
-		)
+				},
+				w,
+			)
+		}()
 	}()
 }
 
