@@ -5,6 +5,7 @@ type Config struct {
 	LLM     LLM     `json:"llm"`
 	OCR     OCR     `json:"ocr"`
 	UI      UI      `json:"ui"`
+	HotKey  HotKey  `json:"hotkey"`
 	Version string  `json:"version"`
 }
 
@@ -40,6 +41,12 @@ type UI struct {
 
 type BaseUrl map[string]string
 
+type HotKey struct {
+	Translate        string `json:"translate"`
+	Capture          string `json:"capture"`
+	CaptureTranslate string `json:"capture_translate"`
+}
+
 func getDefaultConfig() *Config {
 	return &Config{
 		Capture: Capture{
@@ -71,6 +78,11 @@ func getDefaultConfig() *Config {
 		},
 		UI: UI{
 			Theme: "dark",
+		},
+		HotKey: HotKey{
+			Translate:        "Ctrl+Shift+T",
+			Capture:          "Ctrl+Shift+O",
+			CaptureTranslate: "Ctrl+Shift+P",
 		},
 		Version: "1.0.0",
 	}

@@ -42,6 +42,8 @@ func (mw *MainWindow) ShowTranslate(text string) {
 			fyne.Do(func() {
 				// 设置contentShow的文本为传入的text参数
 				contentShow.SetText(text)
+				// 调用Show方法显示翻译窗口
+				mw.TranslatorWindow.Show()
 			})
 		} else {
 			// 如果contentShow为空，则显示一个信息对话框

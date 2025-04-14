@@ -4,6 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"net"
 	"os"
@@ -86,8 +87,22 @@ func init() {
 	mw.Window.Show()
 	mw.CreateShowWindow()
 
-	//系统托盘
+	//允许系统托盘
 	startTray(mw)
+
+	//添加热键
+	err = AddTranslateHotKey()
+	if err != nil {
+		dialog.ShowInformation("热键冲突", "框选区翻译快捷键已被注册", mw.Window)
+	}
+	err = AddCaptureRectangleHotKey()
+	if err != nil {
+		dialog.ShowInformation("热键冲突", "截图翻译快捷键已被注册", mw.Window)
+	}
+	err = AddCaptureTranslateHotKey()
+	if err != nil {
+		dialog.ShowInformation("热键冲突", "截图翻译快捷键已被注册", mw.Window)
+	}
 }
 
 func GetMainWindow() *MainWindow {
