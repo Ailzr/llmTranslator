@@ -6,6 +6,8 @@ import (
 	"llmTranslator/ui"
 )
 
+//TODO 添加冲突检测，并且将热键修改为从配置文件中读取
+
 func AddTranslateHotKey(mw *ui.MainWindow) {
 	// 注册全局热键
 	hk := hotkey.New([]hotkey.Modifier{hotkey.ModCtrl, hotkey.ModShift}, hotkey.KeyT)
@@ -17,9 +19,7 @@ func AddTranslateHotKey(mw *ui.MainWindow) {
 	} else {
 		go func() {
 			for range hk.Keydown() {
-				mw.App.Driver().DoFromGoroutine(func() {
-					mw.Translate()
-				}, false)
+				mw.Translate()
 			}
 		}()
 	}
@@ -41,3 +41,5 @@ func AddCaptureRectangleHotKey(mw *ui.MainWindow) {
 		}()
 	}
 }
+
+//TODO 添加截屏翻译热键功能
