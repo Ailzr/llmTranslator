@@ -1,43 +1,37 @@
 package configs
 
 import (
+	"encoding/json"
 	"github.com/spf13/viper"
 	"llmTranslator/logHelper"
 	"os"
 )
 
-//type OCRConfig struct {
-//	Engine string `json:"engine"` // paddleocr / tesseract
-//	Lang   string `json:"lang"`   // en / japan / etc
-//	Url    string `json:"url"`    // 请求地址
-//}
-//
-//type LLMConfig struct {
-//	Provider  string `json:"provider"`   // ollama
-//	ModelName string `json:"model"`      // 模型名称
-//	BaseURL   string `json:"base_url"`   // API地址
-//	APIKey    string `json:"api_key"`    // API密钥
-//	APISecret string `json:"api_secret"` // API密钥
-//}
-//
-//type AppConfig struct {
-//	OCR OCRConfig `json:"ocr"`
-//	LLM LLMConfig `json:"llm"`
-//}
-//
-//var Config = &AppConfig{}
-
 func init() {
 	//使用viper从config.yaml中读取配置信息
 	//获取文件夹路径
 	workDir, _ := os.Getwd()
+
+	_, err := os.Stat("configs")
+	if os.IsNotExist(err) {
+		err = os.Mkdir("configs", os.ModePerm)
+		if err != nil {
+			logHelper.Error("创建configs文件夹错误: %v", err)
+			logHelper.WriteLog("创建configs文件夹错误: %v", err)
+		}
+	}
+	_, err = os.Stat("configs/setting.json")
+	if os.IsNotExist(err) {
+		createDefaultConfig()
+	}
+
 	//设置配置文件名和路径
 	viper.SetConfigName("setting")
 	viper.AddConfigPath(workDir + "/configs")
 	//设置配置文件类型
 	viper.SetConfigType("json")
 	//读取配置信息
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	//处理错误
 	if err != nil {
 		logHelper.Debug("config load error: %v", err)
@@ -59,24 +53,27 @@ func init() {
 
 }
 
-//func LoadConfig() {
-//	Config.OCR = OCRConfig{
-//		Engine: viper.GetString("ocr.engine"),
-//		Lang:   viper.GetString("ocr.lang"),
-//		Url:    viper.GetString("ocr.url"),
-//	}
-//	Config.LLM = LLMConfig{
-//		Provider:  viper.GetString("llm.provider"),
-//		ModelName: viper.GetString("llm.model"),
-//		BaseURL:   viper.GetString("llm.url"),
-//		APIKey:    viper.GetString("llm.api_key"),
-//		APISecret: viper.GetString("llm.api_secret"),
-//	}
-//}
-//
-//func SaveConfig(cfg *AppConfig) error {
-//	logHelper.Debug("save config: %v", cfg)
-//	// 重新读取配置文件
-//	LoadConfig()
-//	return nil
-//}
+func createDefaultConfig() {
+	file, err := os.OpenFile("configs/setting.json", os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		logHelper.Error("创建配置文件错误: %v", err)
+		logHelper.WriteLog("创建配置文件错误: %v", err)
+		return
+	}
+	defer file.Close()
+
+	config := getDefaultConfig()
+
+	defaultConfig, err := json.Marshal(config)
+	if err != nil {
+		logHelper.Error("创建默认配置时JSON序列化失败: %v", err)
+		logHelper.WriteLog("创建默认配置时JSON序列化失败: %v", err)
+		return
+	}
+
+	_, err = file.Write(defaultConfig)
+	if err != nil {
+		logHelper.Error("创建默认配置时写入配置文件错误: %v", err)
+		logHelper.WriteLog("创建默认配置时写入配置文件错误: %v", err)
+	}
+}
