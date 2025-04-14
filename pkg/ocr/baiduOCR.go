@@ -23,7 +23,7 @@ type BaiduOCRResponse struct {
 }
 
 func ocrTestByBaidu() bool {
-	if baiduOCR("test.png") == "" {
+	if ocrByBaidu("test.png") == "" {
 		return false
 	}
 	return true
@@ -97,7 +97,7 @@ func jointOCRResult(ocrResult *BaiduOCRResponse) string {
 	return result
 }
 
-func baiduOCR(filePath string) string {
+func ocrByBaidu(filePath string) string {
 	if !checkAccessToken() {
 		return ""
 	}

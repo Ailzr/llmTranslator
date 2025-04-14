@@ -25,8 +25,8 @@ func ocrTestByPaddle() bool {
 }
 
 // 通过文件上传调用OCR
-func ocrByPaddle(filePath, lang string) string {
-
+func ocrByPaddle(filePath string) string {
+	sourceLang := viper.GetString("ocr.source_lang")
 	apiURL := viper.GetString("ocr.base_url.paddle")
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -54,7 +54,7 @@ func ocrByPaddle(filePath, lang string) string {
 	}
 
 	// 添加语言参数
-	_ = writer.WriteField("lang", lang)
+	_ = writer.WriteField("lang", sourceLang)
 
 	// 必须显式关闭才能生成正确的multipart内容
 	err = writer.Close()

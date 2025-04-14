@@ -74,7 +74,7 @@ func ollamaTest() bool {
 	return true
 }
 
-func ollamaTranslate(prompt, text, sourceLang, targetLang string) (string, error) {
+func ollamaTranslate(prompt string) (string, error) {
 
 	model := viper.GetString("llm.model")
 	temperature := viper.GetFloat64("llm.temperature")

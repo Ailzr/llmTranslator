@@ -5,8 +5,15 @@ import "github.com/spf13/viper"
 const tmpFilePath = "tmp_img/tmp.png"
 
 func GetOCRResult() string {
-	sourceLang := viper.GetString("ocr.lang")
-	return ocrByPaddle(tmpFilePath, sourceLang)
+	provider := viper.GetString("ocr.provider")
+	switch provider {
+	case "paddle":
+		return ocrByPaddle(tmpFilePath)
+	case "baidu":
+		return ocrByBaidu(tmpFilePath)
+	default:
+		return ""
+	}
 }
 
 func OCRTest() bool {
