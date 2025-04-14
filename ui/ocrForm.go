@@ -47,7 +47,7 @@ func createOCRForm() *widget.Form {
 			})
 		})
 	//设置ocr提供者下拉框的选中项
-	ocrProviderCombo.SetSelected(viper.GetString("ocr.engine"))
+	ocrProviderCombo.SetSelected(viper.GetString("ocr.provider"))
 	//将ocr提供者下拉框添加到表单中
 	form.AppendItem(widget.NewFormItem("OCR提供者", ocrProviderCombo))
 	//将API Key输入框添加到表单中
