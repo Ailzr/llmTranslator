@@ -5,6 +5,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/spf13/viper"
 	"llmTranslator/logHelper"
+	"llmTranslator/utils"
 )
 
 // 创建OCR表单
@@ -16,24 +17,12 @@ func createOCRForm() *widget.Form {
 	//设置语言下拉框
 	langCombo := widget.NewSelect(
 		[]string{"日语", "英语"}, func(s string) {
-			switch s {
-			case "日语":
-				viper.Set("ocr.lang", "japan")
-			case "英语":
-				viper.Set("ocr.lang", "en")
-			default:
-				viper.Set("ocr.lang", "japan")
-			}
+			viper.Set("ocr.lang", utils.LangUnMap[s])
 		})
 	//获取当前设置的语言
 	langSet := viper.GetString("ocr.lang")
 	//根据当前设置的语言设置下拉框的选中项
-	switch langSet {
-	case "japan":
-		langCombo.SetSelected("日语")
-	case "en":
-		langCombo.SetSelected("英语")
-	}
+	langCombo.SetSelected(utils.LangMap[langSet])
 	//将语言下拉框添加到表单中
 	form.AppendItem(widget.NewFormItem("需要翻译的语言", langCombo))
 
@@ -51,23 +40,7 @@ func createOCRForm() *widget.Form {
 	//设置ocr提供者下拉框
 	ocrProviderCombo := widget.NewSelect(
 		[]string{"paddle-ocr", "baidu-ocr"}, func(s string) {
-			switch s {
-			case "paddle-ocr":
-				viper.Set("ocr.provider", "paddle-ocr")
-				//禁用API Key输入框
-				apiKeyEntry.Disable()
-			case "baidu-ocr":
-				viper.Set("ocr.provider", "baidu-ocr")
-				//启用API Key输入框
-				apiKeyEntry.Enable()
-			default:
-				viper.Set("ocr.provider", "paddle-ocr")
-				//禁用API Key输入框
-				apiKeyEntry.Disable()
-				//记录错误日志
-				logHelper.Error("未知的ocr提供者")
-				logHelper.WriteLog("未知的ocr提供者")
-			}
+			viper.Set("ocr.provider", s)
 			//刷新表单
 			fyne.Do(func() {
 				form.Refresh()
@@ -94,7 +67,7 @@ func createOCRForm() *widget.Form {
 	//设置表单的取消事件
 	form.OnCancel = func() {
 		//重置表单
-		reserOCRForm(langCombo, ocrProviderCombo, apiKeyEntry)
+		resetOCRForm(langCombo, ocrProviderCombo, apiKeyEntry)
 	}
 
 	//返回表单
@@ -102,38 +75,36 @@ func createOCRForm() *widget.Form {
 }
 
 // 新增：重置控件的函数
-func reserOCRForm(langCombo *widget.Select, ocrEngineCombo *widget.Select, apiKeyEntry *widget.Entry) {
+func resetOCRForm(langCombo *widget.Select, ocrProviderCombo *widget.Select, apiKeyEntry *widget.Entry) {
 	// 1. 重新加载配置文件（清除内存中的未保存修改）
 	if err := viper.ReadInConfig(); err != nil {
-		// 处理错误（可选）
+		logHelper.Error("读取配置文件失败: %v", err)
+		logHelper.WriteLog("读取配置文件失败: %v", err)
 		return
 	}
 
 	// 2. 恢复语言选择框
 	langSet := viper.GetString("ocr.lang")
-	switch langSet {
-	case "japan":
-		langCombo.SetSelected("日语")
-	case "en":
-		langCombo.SetSelected("英语")
-	default:
-		langCombo.ClearSelected()
-	}
+	fyne.Do(
+		func() {
+			langCombo.SetSelected(utils.LangMap[langSet])
+		})
 
-	// 3. 恢复OCR引擎选择框
-	engineSet := viper.GetString("ocr.provider")
-	switch engineSet {
-	case "paddle-ocr":
-		ocrEngineCombo.SetSelected("paddle-ocr")
+	// 3. 恢复OCR提供者选择框
+	providerSet := viper.GetString("ocr.provider")
+	fyne.Do(func() {
+		ocrProviderCombo.SetSelected(providerSet)
+	})
+
+	if providerSet == "paddle-ocr" {
 		apiKeyEntry.Disable()
-	case "baidu-ocr":
-		ocrEngineCombo.SetSelected("baidu-ocr")
+	} else {
 		apiKeyEntry.Enable()
-	default:
-		ocrEngineCombo.SetSelected("paddle-ocr")
 	}
 
 	// 4. 恢复API Key输入框
 	apiKeySet := viper.GetString("ocr.api_key")
-	apiKeyEntry.SetText(apiKeySet)
+	fyne.Do(func() {
+		apiKeyEntry.SetText(apiKeySet)
+	})
 }
