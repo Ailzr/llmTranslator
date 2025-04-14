@@ -2,10 +2,10 @@ package ui
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"github.com/spf13/viper"
-	"llmTranslator/logHelper"
-	"llmTranslator/utils"
+	"llmTranslator/langMap"
 )
 
 // 创建OCR表单
@@ -14,97 +14,112 @@ func createOCRForm() *widget.Form {
 	//创建表单
 	form := &widget.Form{}
 
+	//读取配置
+	ocrLang := viper.GetString("ocr.lang")
+	ocrProvider := viper.GetString("ocr.provider")
+	ocrAPPID := viper.GetStringMapString("ocr.appid")
+	ocrAPIKey := viper.GetStringMapString("ocr.api_key")
+	ocrAPISecret := viper.GetStringMapString("ocr.api_secret")
+
 	//设置语言下拉框
-	langCombo := widget.NewSelect(
-		[]string{"日语", "英语"}, func(s string) {
-			viper.Set("ocr.lang", utils.LangUnMap[s])
-		})
-	//获取当前设置的语言
-	langSet := viper.GetString("ocr.lang")
+	langCombo := widget.NewSelect([]string{"日语", "英语"}, nil)
 	//根据当前设置的语言设置下拉框的选中项
-	langCombo.SetSelected(utils.LangMap[langSet])
+	langCombo.SetSelected(langMap.LangMap[ocrLang])
 	//将语言下拉框添加到表单中
 	form.AppendItem(widget.NewFormItem("需要翻译的语言", langCombo))
 
+	//创建APP ID输入框
+	appIdEntry := widget.NewEntry()
+	//设置APP ID输入框的文本
+	appIdEntry.SetText(ocrAPPID[ocrProvider])
 	//创建API Key输入框
 	apiKeyEntry := widget.NewEntry()
-	//获取当前设置的API Key
-	apiKeySet := viper.GetString("ocr.api_key")
-	//设置API Key输入框的占位符
-	apiKeyEntry.SetPlaceHolder("请输入API Key")
 	//设置API Key输入框的文本
-	apiKeyEntry.SetText(apiKeySet)
-	//禁用API Key输入框
-	apiKeyEntry.Disabled()
+	apiKeyEntry.SetText(ocrAPIKey[ocrProvider])
+	//创建API Secret输入框
+	apiSecretEntry := widget.NewEntry()
+	//设置API Secret输入框的文本
+	apiSecretEntry.SetText(ocrAPISecret[ocrProvider])
+
+	if ocrProvider == "paddle" {
+		appIdEntry.Disable()
+		apiKeyEntry.Disable()
+		apiSecretEntry.Disable()
+	}
 
 	//设置ocr提供者下拉框
 	ocrProviderCombo := widget.NewSelect(
-		[]string{"paddle-ocr", "baidu-ocr"}, func(s string) {
-			viper.Set("ocr.provider", s)
-			//刷新表单
+		[]string{"paddle", "baidu"}, func(s string) {
 			fyne.Do(func() {
+				if s == "paddle" {
+					appIdEntry.Disable()
+					apiKeyEntry.Disable()
+					apiSecretEntry.Disable()
+				} else {
+					appIdEntry.Enable()
+					apiKeyEntry.Enable()
+					apiSecretEntry.Enable()
+				}
+				appIdEntry.SetText(ocrAPPID[s])
+				apiKeyEntry.SetText(ocrAPIKey[s])
+				apiSecretEntry.SetText(ocrAPISecret[s])
 				form.Refresh()
 			})
 		})
 	//设置ocr提供者下拉框的选中项
-	ocrProviderCombo.SetSelected(viper.GetString("ocr.provider"))
+	ocrProviderCombo.SetSelected(ocrProvider)
 	//将ocr提供者下拉框添加到表单中
 	form.AppendItem(widget.NewFormItem("OCR提供者", ocrProviderCombo))
+	//将APP ID输入框添加到表单中
+	form.AppendItem(widget.NewFormItem("APP ID", appIdEntry))
 	//将API Key输入框添加到表单中
 	form.AppendItem(widget.NewFormItem("API KEY", apiKeyEntry))
+	//将API Secret输入框添加到表单中
+	form.AppendItem(widget.NewFormItem("API Secret", apiSecretEntry))
 
 	//设置表单的提交按钮文本
 	form.SubmitText = "保存设置"
 	//设置表单的提交事件
 	form.OnSubmit = func() {
-		//保存API Key
-		viper.Set("ocr.api_key", apiKeyEntry.Text)
+		ocrLang = langMap.LangUnMap[langCombo.Selected]
+		ocrProvider = ocrProviderCombo.Selected
+
+		ocrAPPID[ocrProvider] = appIdEntry.Text
+		ocrAPIKey[ocrProvider] = apiKeyEntry.Text
+		ocrAPISecret[ocrProvider] = apiSecretEntry.Text
+		//保存
+		viper.Set("ocr.lang", ocrLang)
+		viper.Set("ocr.provider", ocrProvider)
+		viper.Set("ocr.appid", ocrAPPID)
+		viper.Set("ocr.api_key", ocrAPIKey)
+		viper.Set("ocr.api_secret", ocrAPISecret)
 		//写入配置文件
 		_ = viper.WriteConfig()
+
+		dialog.ShowInformation("提示", "保存成功", mw.Window)
 	}
 	//设置表单的取消按钮文本
 	form.CancelText = "取消"
 	//设置表单的取消事件
 	form.OnCancel = func() {
 		//重置表单
-		resetOCRForm(langCombo, ocrProviderCombo, apiKeyEntry)
+		langCombo.SetSelected(langMap.LangUnMap[ocrLang])
+		ocrProviderCombo.SetSelected(ocrProvider)
+		appIdEntry.SetText(ocrAPPID[ocrProvider])
+		apiKeyEntry.SetText(ocrAPIKey[ocrProvider])
+		apiSecretEntry.SetText(ocrAPISecret[ocrProvider])
+		if ocrProvider == "paddle" {
+			appIdEntry.Disable()
+			apiKeyEntry.Disable()
+			apiSecretEntry.Disable()
+		} else {
+			appIdEntry.Enable()
+			apiKeyEntry.Enable()
+			apiSecretEntry.Enable()
+		}
+		form.Refresh()
 	}
 
 	//返回表单
 	return form
-}
-
-// 新增：重置控件的函数
-func resetOCRForm(langCombo *widget.Select, ocrProviderCombo *widget.Select, apiKeyEntry *widget.Entry) {
-	// 1. 重新加载配置文件（清除内存中的未保存修改）
-	if err := viper.ReadInConfig(); err != nil {
-		logHelper.Error("读取配置文件失败: %v", err)
-		logHelper.WriteLog("读取配置文件失败: %v", err)
-		return
-	}
-
-	// 2. 恢复语言选择框
-	langSet := viper.GetString("ocr.lang")
-	fyne.Do(
-		func() {
-			langCombo.SetSelected(utils.LangMap[langSet])
-		})
-
-	// 3. 恢复OCR提供者选择框
-	providerSet := viper.GetString("ocr.provider")
-	fyne.Do(func() {
-		ocrProviderCombo.SetSelected(providerSet)
-	})
-
-	if providerSet == "paddle-ocr" {
-		apiKeyEntry.Disable()
-	} else {
-		apiKeyEntry.Enable()
-	}
-
-	// 4. 恢复API Key输入框
-	apiKeySet := viper.GetString("ocr.api_key")
-	fyne.Do(func() {
-		apiKeyEntry.SetText(apiKeySet)
-	})
 }

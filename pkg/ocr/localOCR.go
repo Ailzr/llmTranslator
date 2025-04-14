@@ -27,7 +27,7 @@ func ocrTestByPaddle() bool {
 // 通过文件上传调用OCR
 func ocrByPaddle(filePath, lang string) string {
 
-	apiURL := viper.GetString("ocr.base_url.paddle-ocr")
+	apiURL := viper.GetString("ocr.base_url.paddle")
 	file, err := os.Open(filePath)
 	if err != nil {
 		logHelper.Error("打开文件失败: %v", err)

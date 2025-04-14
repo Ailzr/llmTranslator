@@ -17,22 +17,25 @@ type Capture struct {
 }
 
 type LLM struct {
-	APIKey          string   `json:"api_key"`
-	APISecret       string   `json:"api_secret"`
-	BaseUrl         BaseUrl  `json:"base_url"`
-	MaxResponseTime int      `json:"max_response_time"`
-	MaxTokens       int      `json:"max_tokens"`
-	Model           string   `json:"model"`
-	Provider        string   `json:"provider"`
-	Support         []string `json:"support"`
-	Temperature     float32  `json:"temperature"`
+	APPID           map[string]string `json:"appid"`
+	APIKey          map[string]string `json:"api_key"`
+	APISecret       map[string]string `json:"api_secret"`
+	BaseUrl         BaseUrl           `json:"base_url"`
+	MaxResponseTime int               `json:"max_response_time"`
+	MaxTokens       int               `json:"max_tokens"`
+	Model           string            `json:"model"`
+	Provider        string            `json:"provider"`
+	Support         []string          `json:"support"`
+	Temperature     float32           `json:"temperature"`
 }
 
 type OCR struct {
-	APIKey   string  `json:"api_key"`
-	BaseUrl  BaseUrl `json:"base_url"`
-	Provider string  `json:"provider"`
-	Lang     string  `json:"lang"`
+	APPID     map[string]string `json:"appid"`
+	APIKey    map[string]string `json:"api_key"`
+	APISecret map[string]string `json:"api_secret"`
+	BaseUrl   BaseUrl           `json:"base_url"`
+	Provider  string            `json:"provider"`
+	Lang      string            `json:"lang"`
 }
 
 type UI struct {
@@ -56,8 +59,9 @@ func getDefaultConfig() *Config {
 			EndY:   0,
 		},
 		LLM: LLM{
-			APIKey:    "",
-			APISecret: "",
+			APPID:     map[string]string{"ollama": "", "xunfei": ""},
+			APIKey:    map[string]string{"ollama": "", "xunfei": ""},
+			APISecret: map[string]string{"ollama": "", "xunfei": ""},
 			BaseUrl: BaseUrl{
 				"ollama": "http://localhost:11434",
 			},
@@ -69,11 +73,14 @@ func getDefaultConfig() *Config {
 			Temperature:     0.5,
 		},
 		OCR: OCR{
-			APIKey: "",
+			APPID:     map[string]string{"paddle": "", "baidu": ""},
+			APIKey:    map[string]string{"paddle": "", "baidu": ""},
+			APISecret: map[string]string{"paddle": "", "baidu": ""},
 			BaseUrl: BaseUrl{
-				"paddle-ocr": "http://localhost:5000",
+				"paddle": "http://localhost:5000",
+				"baidu":  "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic",
 			},
-			Provider: "paddle-ocr",
+			Provider: "paddle",
 			Lang:     "japan",
 		},
 		UI: UI{

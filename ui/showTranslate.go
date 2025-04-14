@@ -106,6 +106,7 @@ func (mw *MainWindow) Translate() {
 		// 调用llm翻译接口，将ocr识别结果翻译为简体中文
 		result := llm.Translate(ocrResult, "简体中文")
 
+		result = ocrResult + "\n--------------分割线----------------\n" + result
 		// 在fyne主线程中执行
 		fyne.Do(func() {
 			// 显示翻译结果
