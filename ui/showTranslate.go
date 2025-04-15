@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"llmTranslator/logHelper"
@@ -24,7 +25,7 @@ func (mw *MainWindow) CreateShowWindow() {
 	contentShow = widget.NewLabel("")
 	contentShow.Wrapping = fyne.TextWrapWord
 
-	mw.TranslatorWindow.SetContent(contentShow)
+	mw.TranslatorWindow.SetContent(container.NewScroll(contentShow))
 
 	//TODO 翻译框大小从配置中读取，动态修改写入到配置中保存
 

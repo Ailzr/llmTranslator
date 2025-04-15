@@ -7,9 +7,9 @@ var LangMap = map[string]string{
 }
 
 var LangUnMap = map[string]string{
-	"英语":     "en",
+	"英语":   "en",
 	"简体中文": "zh-CN",
-	"日语":     "japan",
+	"日语":   "japan",
 }
 
 var LangMapToBaidu = map[string]string{
