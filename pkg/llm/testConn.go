@@ -1,12 +1,12 @@
 package llm
 
 import (
-	"github.com/spf13/viper"
+	"llmTranslator/configs"
 	"llmTranslator/logHelper"
 )
 
 func TestConn() bool {
-	provider := viper.GetString("llm.provider")
+	provider := configs.Setting.LLM.Provider
 	switch provider {
 	case "ollama":
 		return ollamaTest()

@@ -12,6 +12,7 @@ func startTray(mw *MainWindow) {
 		m := fyne.NewMenu("llmTranslator",
 			fyne.NewMenuItem("显示", func() {
 				mw.Window.Show()
+				mw.isTray = false
 			}))
 		desk.SetSystemTrayMenu(m)
 		desk.SetSystemTrayIcon(resourceLlmTranslatorPng)

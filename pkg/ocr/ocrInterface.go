@@ -1,12 +1,16 @@
 package ocr
 
-import "github.com/spf13/viper"
+import (
+	"llmTranslator/configs"
+)
 
 const tmpFilePath = "tmp_img/tmp.png"
 const testFilePath = "test.png"
 
+var LocalOCR = []string{"paddle", "dango"}
+
 func GetOCRResult() string {
-	provider := viper.GetString("ocr.provider")
+	provider := configs.Setting.OCR.Provider
 	switch provider {
 	case "paddle":
 		return ocrByPaddle(tmpFilePath)
@@ -20,7 +24,7 @@ func GetOCRResult() string {
 }
 
 func OCRTest() bool {
-	provider := viper.GetString("ocr.provider")
+	provider := configs.Setting.OCR.Provider
 	switch provider {
 	case "paddle":
 		return ocrTestByPaddle(testFilePath)

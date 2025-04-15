@@ -2,8 +2,8 @@ package ui
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"golang.design/x/hotkey"
+	"llmTranslator/configs"
 	"llmTranslator/logHelper"
 )
 
@@ -21,7 +21,7 @@ var (
 
 func AddTranslateHotKey() error {
 	// 注册全局热键
-	tHotKey := viper.GetString("hotkey.translate")
+	tHotKey := configs.Setting.HotKey.Translate
 	modKeys, key, err := ParseHotKey(tHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)
@@ -45,7 +45,7 @@ func AddTranslateHotKey() error {
 }
 
 func AddCaptureRectangleHotKey() error {
-	cHotKey := viper.GetString("hotkey.capture")
+	cHotKey := configs.Setting.HotKey.Capture
 	modKeys, key, err := ParseHotKey(cHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)
@@ -68,7 +68,7 @@ func AddCaptureRectangleHotKey() error {
 }
 
 func AddCaptureTranslateHotKey() error {
-	ctHotKey := viper.GetString("hotkey.capture_translate")
+	ctHotKey := configs.Setting.HotKey.CaptureTranslate
 	modKeys, key, err := ParseHotKey(ctHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/viper"
 	"io"
+	"llmTranslator/configs"
 	"llmTranslator/logHelper"
 	"mime/multipart"
 	"net/http"
@@ -28,8 +28,6 @@ func ocrTestByPaddle(testFilePath string) bool {
 
 // 通过文件上传调用OCR
 func ocrByPaddle(filePath string) string {
-	sourceLang := viper.GetString("ocr.source_lang")
-	apiURL := viper.GetString("ocr.base_url.paddle")
 	file, err := os.Open(filePath)
 	if err != nil {
 		logHelper.Error("打开文件失败: %v", err)
@@ -56,7 +54,7 @@ func ocrByPaddle(filePath string) string {
 	}
 
 	// 添加语言参数
-	_ = writer.WriteField("lang", sourceLang)
+	_ = writer.WriteField("lang", configs.Setting.OCR.Lang)
 
 	// 必须显式关闭才能生成正确的multipart内容
 	err = writer.Close()
@@ -66,7 +64,7 @@ func ocrByPaddle(filePath string) string {
 		return ""
 	}
 
-	req, err := http.NewRequest("POST", apiURL+"/ocr", body)
+	req, err := http.NewRequest("POST", configs.Setting.OCR.BaseUrl[configs.Setting.OCR.Provider]+"/ocr", body)
 	if err != nil {
 		logHelper.Error("创建请求失败: %v", err)
 		logHelper.WriteLog("创建请求失败: %v", err)

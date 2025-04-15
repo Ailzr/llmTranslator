@@ -5,7 +5,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/spf13/viper"
+	"llmTranslator/configs"
 	"strings"
 )
 
@@ -16,10 +16,10 @@ func createAppSettingForm() *widget.Form {
 	remindLabel.Wrapping = fyne.TextWrapWord
 
 	// 从配置读取初始值
-	trCombo := viper.GetString("hotkey.translate")
-	cpCombo := viper.GetString("hotkey.capture")
-	tcCombo := viper.GetString("hotkey.capture_translate")
-	defaultTraySet := viper.GetBool("default_tray")
+	trCombo := configs.Setting.HotKey.Translate
+	cpCombo := configs.Setting.HotKey.Capture
+	tcCombo := configs.Setting.HotKey.CaptureTranslate
+	defaultTraySet := configs.Setting.DefaultTray
 
 	// 构造表单控件
 	translateEntry := widget.NewEntry()
@@ -77,14 +77,11 @@ func createAppSettingForm() *widget.Form {
 		}
 
 		// 保存到配置
-		viper.Set("hotkey.translate", tText)
-		viper.Set("hotkey.capture", cText)
-		viper.Set("hotkey.capture_translate", tcText)
-		viper.Set("default_tray", defaultTray.Checked)
-		if err := viper.WriteConfig(); err != nil {
-			dialog.ShowError(fmt.Errorf("写入配置失败：%v", err), mw.Window)
-			return
-		}
+		configs.Setting.HotKey.Translate = tText
+		configs.Setting.HotKey.Capture = cText
+		configs.Setting.HotKey.CaptureTranslate = tcText
+		configs.Setting.DefaultTray = defaultTray.Checked
+		configs.WriteSettingToFile()
 
 		// 立即重新注册热键
 		UnregisterAllHotKey()

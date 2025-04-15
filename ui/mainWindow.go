@@ -6,7 +6,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/spf13/viper"
+	"llmTranslator/configs"
 	"net"
 	"os"
 )
@@ -30,7 +30,13 @@ func init() {
 	mw.App = app.New()
 	//mw.App.Settings().SetTheme(&customTheme{})
 	mw.Window = mw.App.NewWindow("llmTranslator")
-	mw.isTray = false
+	if configs.Setting.DefaultTray {
+		mw.Window.Hide()
+		mw.isTray = true
+	} else {
+		mw.Window.Show()
+		mw.isTray = false
+	}
 
 	//设置为主窗口
 	mw.Window.SetMaster()
@@ -88,13 +94,6 @@ func init() {
 	mw.Window.SetContent(tabs)
 
 	mw.CreateShowWindow()
-	defaultTray := viper.GetBool("default_tray")
-	if defaultTray {
-		mw.Window.Hide()
-		mw.isTray = true
-	} else {
-		mw.Window.Show()
-	}
 
 	//允许系统托盘
 	startTray(mw)

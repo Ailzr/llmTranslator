@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/viper"
 	"io"
+	"llmTranslator/configs"
 	"llmTranslator/logHelper"
 	"net/http"
 	"time"
@@ -15,13 +15,15 @@ const ollamaUrl = "http://localhost:11434/api/generate"
 
 // Ollama 请求结构
 type OllamaRequest struct {
-	Model   string `json:"model"`
-	Prompt  string `json:"prompt"`
-	Stream  bool   `json:"stream"`
-	Options struct {
-		Temperature float64 `json:"temperature,omitempty"`
-		MaxTokens   int     `json:"num_predict,omitempty"`
-	} `json:"options,omitempty"`
+	Model   string  `json:"model"`
+	Prompt  string  `json:"prompt"`
+	Stream  bool    `json:"stream"`
+	Options Options `json:"options,omitempty"`
+}
+
+type Options struct {
+	Temperature float32 `json:"temperature,omitempty"`
+	MaxTokens   int     `json:"num_predict,omitempty"`
 }
 
 // Ollama 响应结构
@@ -32,14 +34,11 @@ type OllamaResponse struct {
 }
 
 func ollamaTest() bool {
-	baseUrl := viper.GetString("llm.base_url.ollama")
-	maxResponseTime := viper.GetInt64("llm.max_response_time")
-	client := &http.Client{Timeout: time.Duration(maxResponseTime) * time.Second}
-	model := viper.GetString("llm.model")
+	client := &http.Client{Timeout: time.Duration(configs.Setting.LLM.MaxResponseTime) * time.Second}
 
-	jsonBody, err := json.Marshal(OllamaRequest{Model: model})
+	jsonBody, err := json.Marshal(OllamaRequest{Model: configs.Setting.LLM.Model})
 	resp, err := client.Post(
-		fmt.Sprintf("%s/api/generate", baseUrl),
+		fmt.Sprintf("%s/api/generate", configs.Setting.LLM.BaseUrl[configs.Setting.LLM.Provider]),
 		"application/json",
 		bytes.NewBuffer(jsonBody),
 	)
@@ -76,22 +75,13 @@ func ollamaTest() bool {
 
 func ollamaTranslate(prompt string) (string, error) {
 
-	model := viper.GetString("llm.model")
-	temperature := viper.GetFloat64("llm.temperature")
-	maxTokens := viper.GetInt("llm.max_tokens")
-	baseUrl := viper.GetString("llm.base_url.ollama")
-	maxResponseTime := viper.GetInt64("llm.max_response_time")
-
 	requestBody := OllamaRequest{
-		Model:  model, // 替换实际使用的模型
+		Model:  configs.Setting.LLM.Model, // 替换实际使用的模型
 		Prompt: prompt,
 		Stream: false,
-		Options: struct {
-			Temperature float64 `json:"temperature,omitempty"`
-			MaxTokens   int     `json:"num_predict,omitempty"`
-		}{
-			Temperature: temperature, // 控制生成随机性（0-1）
-			MaxTokens:   maxTokens,   // 最大输出长度
+		Options: Options{
+			Temperature: configs.Setting.LLM.Temperature, // 控制生成随机性（0-1）
+			MaxTokens:   configs.Setting.LLM.MaxTokens,   // 最大输出长度
 		},
 	}
 
@@ -100,9 +90,9 @@ func ollamaTranslate(prompt string) (string, error) {
 		return "", fmt.Errorf("JSON编码失败: %w", err)
 	}
 
-	client := &http.Client{Timeout: time.Second * time.Duration(maxResponseTime)} // 大模型响应较慢
+	client := &http.Client{Timeout: time.Second * time.Duration(configs.Setting.LLM.MaxResponseTime)} // 大模型响应较慢
 	resp, err := client.Post(
-		fmt.Sprintf("%s/api/generate", baseUrl),
+		fmt.Sprintf("%s/api/generate", configs.Setting.LLM.BaseUrl[configs.Setting.LLM.Provider]),
 		"application/json",
 		bytes.NewBuffer(jsonBody),
 	)

@@ -8,9 +8,9 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/driver/desktop"
 	"fyne.io/fyne/v2/widget"
-	"github.com/spf13/viper"
 	"image"
 	"image/color"
+	"llmTranslator/configs"
 	"llmTranslator/logHelper"
 	"llmTranslator/utils"
 	"time"
@@ -81,15 +81,11 @@ func (mw *MainWindow) CaptureRectangle() {
 							mw.CaptureWindow.Close()
 						})
 						//将选取到的坐标保存起来
-						viper.Set("capture.start_x", sel.Min.X)
-						viper.Set("capture.start_y", sel.Min.Y)
-						viper.Set("capture.end_x", sel.Max.X)
-						viper.Set("capture.end_y", sel.Max.Y)
-						err := viper.WriteConfig()
-						if err != nil {
-							logHelper.Error(err.Error())
-							logHelper.WriteLog(err.Error())
-						}
+						configs.Setting.Capture.StartX = sel.Min.X
+						configs.Setting.Capture.StartY = sel.Min.Y
+						configs.Setting.Capture.EndX = sel.Max.X
+						configs.Setting.Capture.EndY = sel.Max.Y
+						configs.WriteSettingToFile()
 						mw.CreateShowWindow()
 					} else {
 						// 用户取消，只隐藏选区框，允许重新框选

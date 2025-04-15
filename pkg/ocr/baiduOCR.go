@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/viper"
 	"io"
+	"llmTranslator/configs"
 	"llmTranslator/langMap"
 	"llmTranslator/logHelper"
 	"net/http"
@@ -30,8 +30,8 @@ func ocrTestByBaidu(testFilePath string) bool {
 }
 
 func getAccessToken() error {
-	apiKey := viper.GetString("ocr.api_key.baidu")
-	apiSecret := viper.GetString("ocr.api_secret.baidu")
+	apiKey := configs.Setting.OCR.Baidu.APIKey
+	apiSecret := configs.Setting.OCR.Baidu.APISecret
 	if apiKey == "" || apiSecret == "" {
 		return fmt.Errorf("百度OCR API Key或Secret为空")
 	}
@@ -62,17 +62,15 @@ func getAccessToken() error {
 	if err != nil {
 		return err
 	}
-	viper.Set("ocr.baidu.access_token", (*resp)["access_token"].(string))
-	viper.Set("ocr.baidu.generate_time", time.Now())
-	err = viper.WriteConfig()
-	if err != nil {
-		return err
-	}
+
+	configs.Setting.OCR.Baidu.AccessToken = (*resp)["access_token"].(string)
+	configs.Setting.OCR.Baidu.GenerateTime = time.Now()
+	configs.WriteSettingToFile()
 	return nil
 }
 
 func checkAccessToken() bool {
-	if viper.GetString("ocr.baidu.access_token") == "" {
+	if configs.Setting.OCR.Baidu.AccessToken == "" {
 		err := getAccessToken()
 		if err != nil {
 			logHelper.Error("获取百度OCR API Token失败: %v", err)
@@ -81,7 +79,7 @@ func checkAccessToken() bool {
 		}
 	}
 	//百度官方说有效期最长时间为30天，这里设置为时间超过25天判断为过期
-	if time.Now().Sub(viper.GetTime("ocr.baidu.generate_time")).Hours() > 24*25 {
+	if time.Since(configs.Setting.OCR.Baidu.GenerateTime) > 24*25*time.Hour {
 		err := getAccessToken()
 		if err != nil {
 			logHelper.Error("获取百度OCR API Token失败: %v", err)
@@ -105,10 +103,7 @@ func ocrByBaidu(filePath string) string {
 		return ""
 	}
 
-	accessToken := viper.GetString("ocr.baidu.access_token")
-	baseUrl := viper.GetString("ocr.base_url.baidu")
-
-	reqUrl := fmt.Sprintf("%s?access_token=%s", baseUrl, accessToken)
+	reqUrl := fmt.Sprintf("%s?access_token=%s", configs.Setting.OCR.BaseUrl[configs.Setting.OCR.Provider], configs.Setting.OCR.Baidu.AccessToken)
 
 	image, err := os.ReadFile(filePath)
 	if err != nil {
@@ -120,9 +115,8 @@ func ocrByBaidu(filePath string) string {
 	base64Image := base64.StdEncoding.EncodeToString(image)
 
 	params := url.Values{}
-	params.Add("access_token", accessToken)
 	params.Add("image", base64Image)
-	params.Add("language_type", langMap.LangMapToBaidu[viper.GetString("ocr.lang")])
+	params.Add("language_type", langMap.LangMapToBaidu[configs.Setting.OCR.Lang])
 
 	res, err := http.Post(reqUrl, "application/x-www-form-urlencoded", bytes.NewBufferString(params.Encode()))
 	if err != nil {

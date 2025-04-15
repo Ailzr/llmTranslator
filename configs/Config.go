@@ -1,99 +1,117 @@
 package configs
 
+import (
+	"bytes"
+	"encoding/json"
+	"github.com/go-viper/mapstructure/v2"
+	"github.com/spf13/viper"
+	"llmTranslator/logHelper"
+	"os"
+	"time"
+)
+
 type Config struct {
-	Capture     Capture `json:"capture"`
-	LLM         LLM     `json:"llm"`
-	OCR         OCR     `json:"ocr"`
-	UI          UI      `json:"ui"`
-	HotKey      HotKey  `json:"hotkey"`
-	DefaultTray bool    `json:"default_tray"`
-	Version     string  `json:"version"`
+	Capture     Capture `json:"capture" mapstructure:"capture"`
+	LLM         LLM     `json:"llm" mapstructure:"llm"`
+	OCR         OCR     `json:"ocr" mapstructure:"ocr"`
+	UI          UI      `json:"ui" mapstructure:"ui"`
+	HotKey      HotKey  `json:"hotkey" mapstructure:"hotkey"`
+	DefaultTray bool    `json:"default_tray" mapstructure:"default_tray"`
+	Version     string  `json:"version" mapstructure:"version"`
 }
 
 type Capture struct {
-	StartX int `json:"start_x"`
-	StartY int `json:"start_y"`
-	EndX   int `json:"end_x"`
-	EndY   int `json:"end_y"`
+	StartX int `json:"start_x" mapstructure:"start_x"`
+	StartY int `json:"start_y" mapstructure:"start_y"`
+	EndX   int `json:"end_x" mapstructure:"end_x"`
+	EndY   int `json:"end_y" mapstructure:"end_y"`
 }
 
 type LLM struct {
-	APPID           map[string]string `json:"appid"`
-	APIKey          map[string]string `json:"api_key"`
-	APISecret       map[string]string `json:"api_secret"`
-	BaseUrl         BaseUrl           `json:"base_url"`
-	MaxResponseTime int               `json:"max_response_time"`
-	MaxTokens       int               `json:"max_tokens"`
-	Model           string            `json:"model"`
-	Provider        string            `json:"provider"`
-	Support         []string          `json:"support"`
-	Temperature     float32           `json:"temperature"`
+	BaseUrl         map[string]string `json:"base_url" mapstructure:"base_url"`
+	MaxResponseTime int               `json:"max_response_time" mapstructure:"max_response_time"`
+	MaxTokens       int               `json:"max_tokens" mapstructure:"max_tokens"`
+	Model           string            `json:"model" mapstructure:"model"`
+	Provider        string            `json:"provider" mapstructure:"provider"`
+	Support         []string          `json:"support" mapstructure:"support"`
+	Temperature     float32           `json:"temperature" mapstructure:"temperature"`
 }
 
 type OCR struct {
-	APPID     map[string]string `json:"appid"`
-	APIKey    map[string]string `json:"api_key"`
-	APISecret map[string]string `json:"api_secret"`
-	BaseUrl   BaseUrl           `json:"base_url"`
-	Provider  string            `json:"provider"`
-	Lang      string            `json:"lang"`
+	BaseUrl  map[string]string `json:"base_url" mapstructure:"base_url"`
+	Provider string            `json:"provider" mapstructure:"provider"`
+	Lang     string            `json:"lang" mapstructure:"lang"`
+	Baidu    Baidu             `json:"baidu" mapstructure:"baidu"`
 }
 
 type UI struct {
-	Theme string `json:"theme"`
+	Theme string `json:"theme" mapstructure:"theme"`
 }
-
-type BaseUrl map[string]string
 
 type HotKey struct {
-	Translate        string `json:"translate"`
-	Capture          string `json:"capture"`
-	CaptureTranslate string `json:"capture_translate"`
+	Translate        string `json:"translate" mapstructure:"translate"`
+	Capture          string `json:"capture" mapstructure:"capture"`
+	CaptureTranslate string `json:"capture_translate" mapstructure:"capture_translate"`
 }
 
-func getDefaultConfig() *Config {
-	return &Config{
-		Capture: Capture{
-			StartX: 0,
-			StartY: 0,
-			EndX:   0,
-			EndY:   0,
-		},
-		LLM: LLM{
-			APPID:     map[string]string{"ollama": "", "xunfei": ""},
-			APIKey:    map[string]string{"ollama": "", "xunfei": ""},
-			APISecret: map[string]string{"ollama": "", "xunfei": ""},
-			BaseUrl: BaseUrl{
-				"ollama": "http://localhost:11434",
-			},
-			MaxResponseTime: 60,
-			MaxTokens:       2000,
-			Model:           "deepseek-r1:8b",
-			Provider:        "ollama",
-			Support:         []string{"deepseek-r1:8b", "mistral:latest", "EasonONLINE/Sakura-qwen2.5-v1.0:7b"},
-			Temperature:     0.5,
-		},
-		OCR: OCR{
-			APPID:     map[string]string{"paddle": "", "dango": "", "baidu": ""},
-			APIKey:    map[string]string{"paddle": "", "dango": "", "baidu": ""},
-			APISecret: map[string]string{"paddle": "", "dango": "", "baidu": ""},
-			BaseUrl: BaseUrl{
-				"paddle": "http://localhost:5000",
-				"dango":  "http://localhost:6666",
-				"baidu":  "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic",
-			},
-			Provider: "dango",
-			Lang:     "japan",
-		},
-		UI: UI{
-			Theme: "dark",
-		},
-		HotKey: HotKey{
-			Translate:        "Ctrl+Shift+T",
-			Capture:          "Ctrl+Shift+O",
-			CaptureTranslate: "Ctrl+Shift+P",
-		},
-		DefaultTray: false,
-		Version:     "1.0.0",
+type Baidu struct {
+	AccessToken  string    `json:"access_token" mapstructure:"access_token"`
+	GenerateTime time.Time `json:"generate_time" mapstructure:"generate_time"`
+	APIKey       string    `json:"api_key" mapstructure:"api_key"`
+	APISecret    string    `json:"api_secret" mapstructure:"api_secret"`
+}
+
+func createDefaultConfig() {
+	file, err := os.OpenFile("configs/setting.json", os.O_CREATE, 0666)
+	if err != nil {
+		logHelper.Error("创建配置文件错误: %v", err)
+		logHelper.WriteLog("创建配置文件错误: %v", err)
+		return
+	}
+	err = file.Close()
+	if err != nil {
+		logHelper.Error("关闭配置文件错误: %v", err)
+		logHelper.WriteLog("关闭配置文件错误: %v", err)
+		return
+	}
+
+	WriteSettingToFile()
+}
+
+func LoadSettingByFile() {
+	if err := viper.ReadInConfig(); err != nil {
+		logHelper.Error("读取配置文件错误: %v", err)
+		logHelper.WriteLog("读取配置文件错误: %v", err)
+		return
+	}
+	decodeHook := mapstructure.ComposeDecodeHookFunc(
+		mapstructure.StringToTimeHookFunc(time.RFC3339),
+	)
+	if err := viper.Unmarshal(&Setting, viper.DecodeHook(decodeHook)); err != nil {
+		logHelper.Error("配置解析失败: %v", err)
+		logHelper.WriteLog("配置解析失败: %v", err)
+		return
+	}
+}
+
+func WriteSettingToFile() {
+	marshal, err := json.Marshal(Setting)
+	if err != nil {
+		logHelper.Error("创建默认配置时JSON序列化失败: %v", err)
+		logHelper.WriteLog("创建默认配置时JSON序列化失败: %v", err)
+		return
+	}
+	err = viper.ReadConfig(bytes.NewReader(marshal))
+	if err != nil {
+		logHelper.Error("创建默认配置时读取配置文件错误: %v", err)
+		logHelper.WriteLog("创建默认配置时读取配置文件错误: %v", err)
+		return
+	}
+
+	err = viper.WriteConfig()
+	if err != nil {
+		logHelper.Error("创建默认配置时写入配置文件错误: %v", err)
+		logHelper.WriteLog("创建默认配置时写入配置文件错误: %v", err)
+		return
 	}
 }

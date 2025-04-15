@@ -2,8 +2,8 @@ package ocr
 
 import (
 	"encoding/json"
-	"github.com/spf13/viper"
 	"io"
+	"llmTranslator/configs"
 	"llmTranslator/langMap"
 	"llmTranslator/logHelper"
 	"net/http"
@@ -50,8 +50,8 @@ func parseDangoResponse(dangoResponse *DangoResponse) string {
 }
 
 func ocrByDango(filePath string) string {
-	baseUrl := viper.GetString("ocr.base_url.dango")
-	lang := langMap.LangMapToDango[viper.GetString("ocr.lang")]
+	baseUrl := configs.Setting.OCR.BaseUrl[configs.Setting.OCR.Provider]
+	lang := langMap.LangMapToDango[configs.Setting.OCR.Lang]
 	workDir, err := os.Getwd()
 	if err != nil {
 		logHelper.Error("获取工作目录失败: %v", err)
