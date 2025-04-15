@@ -17,6 +17,7 @@ type MainWindow struct {
 	Listener         net.Listener //防止重复启动应用的监听器
 	Window           fyne.Window  //主窗口
 	TranslatorWindow fyne.Window  //翻译展示窗口
+	CaptureWindow    fyne.Window  //截图窗口
 	isTray           bool         //是否启用系统托盘
 }
 

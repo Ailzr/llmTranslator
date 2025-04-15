@@ -16,13 +16,17 @@ import (
 	"time"
 )
 
-var w fyne.Window
-
 func (mw *MainWindow) CaptureRectangle() {
-	fyne.DoAndWait(func() {
-		w = mw.App.NewWindow("截屏")
-		w.SetFullScreen(true)
-		w.SetPadded(false)
+	
+	fyne.Do(func() {
+		if mw.CaptureWindow != nil {
+			mw.CaptureWindow.Close()
+			mw.CaptureWindow = nil
+		}
+		//创建截屏窗口
+		mw.CaptureWindow = mw.App.NewWindow("截屏")
+		mw.CaptureWindow.SetFullScreen(true)
+		mw.CaptureWindow.SetPadded(false)
 
 		//截图前将主窗口和翻译窗口隐藏
 		if !mw.isTray {
@@ -47,19 +51,19 @@ func (mw *MainWindow) CaptureRectangle() {
 		result := make(chan image.Rectangle)
 		overlay := newSelectOverlay(result)
 
-		fyne.DoAndWait(func() {
-			w.SetContent(container.NewStack(bg, overlay))
+		fyne.Do(func() {
+			mw.CaptureWindow.SetContent(container.NewStack(bg, overlay))
 		})
 
-		w.Canvas().(desktop.Canvas).SetOnKeyDown(func(e *fyne.KeyEvent) {
+		mw.CaptureWindow.Canvas().(desktop.Canvas).SetOnKeyDown(func(e *fyne.KeyEvent) {
 			switch e.Name {
 			case fyne.KeyEscape:
-				w.Close()
+				mw.CaptureWindow.Close()
 			}
 		})
 
 		fyne.Do(func() {
-			w.Show()
+			mw.CaptureWindow.Show()
 			//重新显示主窗口和翻译窗口
 			if !mw.isTray {
 				mw.Window.Show()
@@ -74,7 +78,7 @@ func (mw *MainWindow) CaptureRectangle() {
 				func(ok bool) {
 					if ok {
 						fyne.Do(func() {
-							w.Close()
+							mw.CaptureWindow.Close()
 						})
 						//将选取到的坐标保存起来
 						viper.Set("capture.start_x", sel.Min.X)
@@ -90,11 +94,11 @@ func (mw *MainWindow) CaptureRectangle() {
 					} else {
 						// 用户取消，只隐藏选区框，允许重新框选
 						fyne.Do(func() {
-							w.Close()
+							mw.CaptureWindow.Close()
 						})
 					}
 				},
-				w,
+				mw.CaptureWindow,
 			)
 		}()
 	}()
