@@ -22,8 +22,8 @@ type BaiduOCRResponse struct {
 	LogId          int64               `json:"log_id"`
 }
 
-func ocrTestByBaidu() bool {
-	if ocrByBaidu("test.png") == "" {
+func ocrTestByBaidu(testFilePath string) bool {
+	if ocrByBaidu(testFilePath) == "" {
 		return false
 	}
 	return true
@@ -32,6 +32,9 @@ func ocrTestByBaidu() bool {
 func getAccessToken() error {
 	apiKey := viper.GetString("ocr.api_key.baidu")
 	apiSecret := viper.GetString("ocr.api_secret.baidu")
+	if apiKey == "" || apiSecret == "" {
+		return fmt.Errorf("百度OCR API Key或Secret为空")
+	}
 	accessUrl := fmt.Sprintf("https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=%s&client_secret=%s", apiKey, apiSecret)
 
 	payload := strings.NewReader(``)

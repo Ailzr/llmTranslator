@@ -3,6 +3,7 @@ package ocr
 import "github.com/spf13/viper"
 
 const tmpFilePath = "tmp_img/tmp.png"
+const testFilePath = "test.png"
 
 func GetOCRResult() string {
 	provider := viper.GetString("ocr.provider")
@@ -20,9 +21,9 @@ func OCRTest() bool {
 	provider := viper.GetString("ocr.provider")
 	switch provider {
 	case "paddle":
-		return ocrTestByPaddle()
+		return ocrTestByPaddle(testFilePath)
 	case "baidu":
-		return ocrTestByBaidu()
+		return ocrTestByBaidu(testFilePath)
 	default:
 		return false
 	}
