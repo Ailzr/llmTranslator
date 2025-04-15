@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
+	"github.com/spf13/viper"
 	"net"
 	"os"
 )
@@ -74,10 +75,10 @@ func init() {
 			),
 		),
 		container.NewTabItem(
-			"快捷键",
+			"应用设置",
 			container.NewVBox(
-				widget.NewLabel("快捷键设置"),
-				createHotKeyForm(),
+				widget.NewLabel("应用设置"),
+				createAppSettingForm(),
 			),
 		),
 	)
@@ -85,8 +86,15 @@ func init() {
 	tabs.SetTabLocation(container.TabLocationLeading)
 
 	mw.Window.SetContent(tabs)
-	mw.Window.Show()
+
 	mw.CreateShowWindow()
+	defaultTray := viper.GetBool("default_tray")
+	if defaultTray {
+		mw.Window.Hide()
+		mw.isTray = true
+	} else {
+		mw.Window.Show()
+	}
 
 	//允许系统托盘
 	startTray(mw)

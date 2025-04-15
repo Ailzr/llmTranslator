@@ -17,7 +17,7 @@ import (
 )
 
 func (mw *MainWindow) CaptureRectangle() {
-	
+
 	fyne.Do(func() {
 		if mw.CaptureWindow != nil {
 			mw.CaptureWindow.Close()

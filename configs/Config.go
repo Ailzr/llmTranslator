@@ -1,12 +1,13 @@
 package configs
 
 type Config struct {
-	Capture Capture `json:"capture"`
-	LLM     LLM     `json:"llm"`
-	OCR     OCR     `json:"ocr"`
-	UI      UI      `json:"ui"`
-	HotKey  HotKey  `json:"hotkey"`
-	Version string  `json:"version"`
+	Capture     Capture `json:"capture"`
+	LLM         LLM     `json:"llm"`
+	OCR         OCR     `json:"ocr"`
+	UI          UI      `json:"ui"`
+	HotKey      HotKey  `json:"hotkey"`
+	DefaultTray bool    `json:"default_tray"`
+	Version     string  `json:"version"`
 }
 
 type Capture struct {
@@ -92,6 +93,7 @@ func getDefaultConfig() *Config {
 			Capture:          "Ctrl+Shift+O",
 			CaptureTranslate: "Ctrl+Shift+P",
 		},
-		Version: "1.0.0",
+		DefaultTray: false,
+		Version:     "1.0.0",
 	}
 }

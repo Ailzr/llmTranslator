@@ -31,7 +31,6 @@ func (mw *MainWindow) CreateShowWindow() {
 	//TODO 翻译框大小从配置中读取，动态修改写入到配置中保存
 
 	mw.TranslatorWindow.Resize(fyne.NewSize(800, 300))
-	mw.TranslatorWindow.Show()
 }
 
 // ShowTranslate函数用于显示翻译后的文本

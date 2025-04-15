@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func createHotKeyForm() *widget.Form {
+func createAppSettingForm() *widget.Form {
 	form := &widget.Form{}
 
 	remindLabel := widget.NewLabel("支持的按键：Ctrl、Shift、Alt、F1-F12、A-Z | 输入格式：Ctrl+Shift+T")
@@ -19,6 +19,7 @@ func createHotKeyForm() *widget.Form {
 	trCombo := viper.GetString("hotkey.translate")
 	cpCombo := viper.GetString("hotkey.capture")
 	tcCombo := viper.GetString("hotkey.capture_translate")
+	defaultTraySet := viper.GetBool("default_tray")
 
 	// 构造表单控件
 	translateEntry := widget.NewEntry()
@@ -33,10 +34,14 @@ func createHotKeyForm() *widget.Form {
 	tcEntry.SetText(tcCombo)
 	tcEntry.SetPlaceHolder("输入快捷键组合")
 
-	form.AppendItem(widget.NewFormItem("提示", remindLabel))
+	defaultTray := widget.NewCheck("默认托盘", nil)
+	defaultTray.Checked = defaultTraySet
+
+	form.AppendItem(widget.NewFormItem("快捷键设置", remindLabel))
 	form.AppendItem(widget.NewFormItem("框选区翻译热键", translateEntry))
 	form.AppendItem(widget.NewFormItem("截图热键", captureEntry))
 	form.AppendItem(widget.NewFormItem("截图翻译热键", tcEntry))
+	form.AppendItem(widget.NewFormItem("启动时默认托盘", defaultTray))
 
 	form.SubmitText = "保存"
 	form.OnSubmit = func() {
@@ -75,6 +80,7 @@ func createHotKeyForm() *widget.Form {
 		viper.Set("hotkey.translate", tText)
 		viper.Set("hotkey.capture", cText)
 		viper.Set("hotkey.capture_translate", tcText)
+		viper.Set("default_tray", defaultTray.Checked)
 		if err := viper.WriteConfig(); err != nil {
 			dialog.ShowError(fmt.Errorf("写入配置失败：%v", err), mw.Window)
 			return
@@ -86,7 +92,7 @@ func createHotKeyForm() *widget.Form {
 		_ = AddCaptureRectangleHotKey()
 		_ = AddCaptureTranslateHotKey()
 
-		dialog.ShowInformation("保存成功", "热键已保存并生效", mw.Window)
+		dialog.ShowInformation("保存成功", "设置已保存", mw.Window)
 	}
 
 	form.CancelText = "取消"
