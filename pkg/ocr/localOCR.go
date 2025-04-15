@@ -19,8 +19,10 @@ type OCRResponse struct {
 	Text string `json:"text"`
 }
 
-func ocrTestByPaddle() bool {
-	//TODO Paddle-OCR测试
+func ocrTestByPaddle(testFilePath string) bool {
+	if ocrByPaddle(testFilePath) == "" {
+		return false
+	}
 	return true
 }
 
