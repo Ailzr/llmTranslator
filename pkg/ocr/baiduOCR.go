@@ -95,7 +95,7 @@ func checkAccessToken() bool {
 func jointOCRResult(ocrResult *BaiduOCRResponse) string {
 	result := ""
 	for _, item := range ocrResult.WordsResult {
-		result += item["words"] + "\n"
+		result += item["words"]
 	}
 	return result
 }

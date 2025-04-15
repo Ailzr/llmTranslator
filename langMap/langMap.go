@@ -17,3 +17,11 @@ var LangMapToBaidu = map[string]string{
 	"zh-CN": "CHN_ENG",
 	"japan": "JAP",
 }
+
+var LangMapToDango = map[string]string{
+	"en":     "ENG",
+	"zh-CN":  "ZH",
+	"japan":  "JAP",
+	"kr":     "KOR",
+	"russia": "RU",
+}

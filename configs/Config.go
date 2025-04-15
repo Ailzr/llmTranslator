@@ -73,14 +73,15 @@ func getDefaultConfig() *Config {
 			Temperature:     0.5,
 		},
 		OCR: OCR{
-			APPID:     map[string]string{"paddle": "", "baidu": ""},
-			APIKey:    map[string]string{"paddle": "", "baidu": ""},
-			APISecret: map[string]string{"paddle": "", "baidu": ""},
+			APPID:     map[string]string{"paddle": "", "dango": "", "baidu": ""},
+			APIKey:    map[string]string{"paddle": "", "dango": "", "baidu": ""},
+			APISecret: map[string]string{"paddle": "", "dango": "", "baidu": ""},
 			BaseUrl: BaseUrl{
 				"paddle": "http://localhost:5000",
+				"dango":  "http://localhost:6666",
 				"baidu":  "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic",
 			},
-			Provider: "paddle",
+			Provider: "dango",
 			Lang:     "japan",
 		},
 		UI: UI{

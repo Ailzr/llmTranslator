@@ -10,6 +10,8 @@ func GetOCRResult() string {
 	switch provider {
 	case "paddle":
 		return ocrByPaddle(tmpFilePath)
+	case "dango":
+		return ocrByDango(tmpFilePath)
 	case "baidu":
 		return ocrByBaidu(tmpFilePath)
 	default:
@@ -22,6 +24,8 @@ func OCRTest() bool {
 	switch provider {
 	case "paddle":
 		return ocrTestByPaddle(testFilePath)
+	case "dango":
+		return ocrTestByDango(testFilePath)
 	case "baidu":
 		return ocrTestByBaidu(testFilePath)
 	default:

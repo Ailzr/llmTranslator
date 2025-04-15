@@ -8,6 +8,8 @@ import (
 	"llmTranslator/langMap"
 )
 
+var ocrProvider string
+
 // 创建OCR表单
 func createOCRForm() *widget.Form {
 
@@ -16,7 +18,7 @@ func createOCRForm() *widget.Form {
 
 	//读取配置
 	ocrLang := viper.GetString("ocr.lang")
-	ocrProvider := viper.GetString("ocr.provider")
+	ocrProvider = viper.GetString("ocr.provider")
 	ocrAPPID := viper.GetStringMapString("ocr.appid")
 	ocrAPIKey := viper.GetStringMapString("ocr.api_key")
 	ocrAPISecret := viper.GetStringMapString("ocr.api_secret")
@@ -41,29 +43,41 @@ func createOCRForm() *widget.Form {
 	//设置API Secret输入框的文本
 	apiSecretEntry.SetText(ocrAPISecret[ocrProvider])
 
-	if ocrProvider == "paddle" {
-		appIdEntry.Disable()
-		apiKeyEntry.Disable()
-		apiSecretEntry.Disable()
+	openInput := widget.NewCheck("开启或者关闭输入框", func(b bool) {
+		if b {
+			fyne.Do(func() {
+				appIdEntry.Enable()
+				apiKeyEntry.Enable()
+				apiSecretEntry.Enable()
+				appIdEntry.SetText(ocrAPPID[ocrProvider])
+				apiKeyEntry.SetText(ocrAPIKey[ocrProvider])
+				apiSecretEntry.SetText(ocrAPISecret[ocrProvider])
+				form.Refresh()
+			})
+		} else {
+			fyne.Do(func() {
+				appIdEntry.Disable()
+				apiKeyEntry.Disable()
+				apiSecretEntry.Disable()
+				form.Refresh()
+			})
+		}
+	})
+
+	if ocrProvider == "paddle" || ocrProvider == "dango" {
+		openInput.Checked = false
 	}
 
 	//设置ocr提供者下拉框
 	ocrProviderCombo := widget.NewSelect(
-		[]string{"paddle", "baidu"}, func(s string) {
+		[]string{"paddle", "dango", "baidu"}, func(s string) {
+			ocrProvider = s
 			fyne.Do(func() {
-				if s == "paddle" {
-					appIdEntry.Disable()
-					apiKeyEntry.Disable()
-					apiSecretEntry.Disable()
+				if ocrProvider == "paddle" || ocrProvider == "dango" {
+					openInput.Checked = false
 				} else {
-					appIdEntry.Enable()
-					apiKeyEntry.Enable()
-					apiSecretEntry.Enable()
+					openInput.Checked = true
 				}
-				appIdEntry.SetText(ocrAPPID[s])
-				apiKeyEntry.SetText(ocrAPIKey[s])
-				apiSecretEntry.SetText(ocrAPISecret[s])
-				form.Refresh()
 			})
 		})
 	//设置ocr提供者下拉框的选中项
@@ -82,7 +96,6 @@ func createOCRForm() *widget.Form {
 	//设置表单的提交事件
 	form.OnSubmit = func() {
 		ocrLang = langMap.LangUnMap[langCombo.Selected]
-		ocrProvider = ocrProviderCombo.Selected
 
 		ocrAPPID[ocrProvider] = appIdEntry.Text
 		ocrAPIKey[ocrProvider] = apiKeyEntry.Text
@@ -108,16 +121,11 @@ func createOCRForm() *widget.Form {
 		appIdEntry.SetText(ocrAPPID[ocrProvider])
 		apiKeyEntry.SetText(ocrAPIKey[ocrProvider])
 		apiSecretEntry.SetText(ocrAPISecret[ocrProvider])
-		if ocrProvider == "paddle" {
-			appIdEntry.Disable()
-			apiKeyEntry.Disable()
-			apiSecretEntry.Disable()
+		if ocrProvider == "paddle" || ocrProvider == "dango" {
+			openInput.Checked = false
 		} else {
-			appIdEntry.Enable()
-			apiKeyEntry.Enable()
-			apiSecretEntry.Enable()
+			openInput.Checked = true
 		}
-		form.Refresh()
 	}
 
 	//返回表单
