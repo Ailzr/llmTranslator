@@ -39,7 +39,7 @@ func createAppSettingForm() *widget.Form {
 
 	form.AppendItem(widget.NewFormItem("快捷键设置", remindLabel))
 	form.AppendItem(widget.NewFormItem("框选区翻译热键", translateEntry))
-	form.AppendItem(widget.NewFormItem("截图热键", captureEntry))
+	form.AppendItem(widget.NewFormItem("选区热键", captureEntry))
 	form.AppendItem(widget.NewFormItem("截图翻译热键", tcEntry))
 	form.AppendItem(widget.NewFormItem("启动时默认托盘", defaultTray))
 

@@ -16,6 +16,8 @@ import (
 	"time"
 )
 
+//TODO 拆分截图功能
+
 func (mw *MainWindow) CaptureRectangle() {
 
 	fyne.Do(func() {
