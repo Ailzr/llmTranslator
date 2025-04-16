@@ -36,9 +36,10 @@ var Setting = Config{
 		Theme: "dark",
 	},
 	HotKey: HotKey{
-		Translate:        "Ctrl+Shift+T",
-		Capture:          "Ctrl+Shift+O",
-		CaptureTranslate: "Ctrl+Shift+P",
+		Translate:          "Ctrl+Shift+T",
+		Capture:            "Ctrl+Shift+O",
+		CaptureTranslate:   "Ctrl+Shift+P",
+		CaptureToClipboard: "Ctrl+Shift+Q",
 	},
 	DefaultTray: false,
 	Version:     "1.0.0",

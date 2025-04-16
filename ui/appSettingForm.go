@@ -85,9 +85,7 @@ func createAppSettingForm() *widget.Form {
 
 		// 立即重新注册热键
 		UnregisterAllHotKey()
-		_ = AddTranslateHotKey()
-		_ = AddCaptureRectangleHotKey()
-		_ = AddCaptureTranslateHotKey()
+		RegisterAllHotKey()
 
 		dialog.ShowInformation("保存成功", "设置已保存", mw.Window)
 	}

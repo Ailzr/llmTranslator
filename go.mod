@@ -4,10 +4,12 @@ go 1.23.2
 
 require (
 	fyne.io/fyne/v2 v2.6.0
+	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/kbinani/screenshot v0.0.0-20250118074034-a3924b7bbc8c
+	github.com/skanehira/clipboard-image v1.0.0
 	github.com/spf13/viper v1.20.1
-	github.com/therecipe/qt v0.0.0-20200904063919-c0c124a5770d
 	golang.design/x/hotkey v0.4.1
+	golang.org/x/image v0.24.0
 )
 
 require (
@@ -25,9 +27,7 @@ require (
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240506104042-037f3cc74f2a // indirect
 	github.com/go-text/render v0.2.0 // indirect
 	github.com/go-text/typesetting v0.2.1 // indirect
-	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20190411002643-bd77b112433e // indirect
 	github.com/hack-pad/go-indexeddb v0.3.2 // indirect
 	github.com/hack-pad/safejs v0.1.0 // indirect
 	github.com/jeandeaual/go-locale v0.0.0-20241217141322-fcc2cadd6f08 // indirect
@@ -40,6 +40,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rymdport/portal v0.4.1 // indirect
 	github.com/sagikazarmark/locafero v0.7.0 // indirect
+	github.com/skanehira/clipboard-image/v2 v2.0.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.12.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
@@ -51,7 +52,6 @@ require (
 	github.com/yuin/goldmark v1.7.8 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/image v0.24.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.22.0 // indirect

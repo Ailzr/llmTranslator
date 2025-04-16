@@ -5,6 +5,8 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
+	"image"
+	"llmTranslator/configs"
 	"llmTranslator/logHelper"
 	"llmTranslator/pkg/llm"
 	"llmTranslator/pkg/ocr"
@@ -71,7 +73,7 @@ func (mw *MainWindow) Translate() {
 		time.Sleep(300 * time.Millisecond)
 
 		// 截取屏幕图像
-		img, err := utils.CaptureImg()
+		img, err := utils.CaptureImg(image.Point{X: configs.Setting.Capture.StartX, Y: configs.Setting.Capture.StartY}, image.Point{X: configs.Setting.Capture.EndX, Y: configs.Setting.Capture.EndY})
 		// 将图像保存为png格式
 		utils.SaveImgToPng(img, "tmp")
 		// 如果截取失败，记录错误并显示截图失败

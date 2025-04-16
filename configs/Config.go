@@ -49,9 +49,10 @@ type UI struct {
 }
 
 type HotKey struct {
-	Translate        string `json:"translate" mapstructure:"translate"`
-	Capture          string `json:"capture" mapstructure:"capture"`
-	CaptureTranslate string `json:"capture_translate" mapstructure:"capture_translate"`
+	Translate          string `json:"translate" mapstructure:"translate"`
+	Capture            string `json:"capture" mapstructure:"capture"`
+	CaptureTranslate   string `json:"capture_translate" mapstructure:"capture_translate"`
+	CaptureToClipboard string `json:"capture_to_clipboard" mapstructure:"capture_to_clipboard"`
 }
 
 type Baidu struct {
