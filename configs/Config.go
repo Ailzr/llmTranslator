@@ -17,6 +17,7 @@ type Config struct {
 	UI          UI      `json:"ui" mapstructure:"ui"`
 	HotKey      HotKey  `json:"hotkey" mapstructure:"hotkey"`
 	DefaultTray bool    `json:"default_tray" mapstructure:"default_tray"`
+	ShowRawText bool    `json:"show_raw_text" mapstructure:"show_raw_text"`
 	Version     string  `json:"version" mapstructure:"version"`
 }
 

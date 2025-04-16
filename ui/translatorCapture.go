@@ -10,8 +10,6 @@ import (
 	"image"
 	"llmTranslator/configs"
 	"llmTranslator/logHelper"
-	"llmTranslator/pkg/llm"
-	"llmTranslator/pkg/ocr"
 	"llmTranslator/utils"
 	"time"
 )
@@ -109,11 +107,7 @@ func (mw *MainWindow) CaptureAndTranslate() {
 			}
 			subImg := screen.SubImage(sel)
 			utils.SaveImgToPng(subImg.(*image.RGBA), "tmp")
-			ocrResult := ocr.GetOCRResult()
-			res := llm.Translate(ocrResult, "简体中文")
-			fyne.Do(func() {
-				mw.ShowTranslate(res)
-			})
+			mw.Translate()
 		}()
 
 	})

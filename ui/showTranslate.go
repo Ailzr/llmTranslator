@@ -32,7 +32,7 @@ func (mw *MainWindow) CreateShowWindow() {
 
 	//TODO 翻译框大小从配置中读取，动态修改写入到配置中保存
 
-	mw.TranslatorWindow.Resize(fyne.NewSize(800, 300))
+	mw.TranslatorWindow.Resize(fyne.NewSize(float32(configs.Setting.Capture.EndX-configs.Setting.Capture.StartX), float32(configs.Setting.Capture.EndY-configs.Setting.Capture.StartY)))
 }
 
 // ShowTranslate函数用于显示翻译后的文本
@@ -106,8 +106,10 @@ func (mw *MainWindow) Translate() {
 
 		// 调用llm翻译接口，将ocr识别结果翻译为简体中文
 		result := llm.Translate(ocrResult, "简体中文")
+		if configs.Setting.ShowRawText {
+			result = ocrResult + "\n--------------分割线----------------\n" + result
+		}
 
-		result = ocrResult + "\n--------------分割线----------------\n" + result
 		// 在fyne主线程中执行
 		fyne.Do(func() {
 			// 显示翻译结果

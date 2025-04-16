@@ -39,6 +39,9 @@ func createAppSettingForm() *widget.Form {
 	ctcEntry.SetText(ctcCombo)
 	ctcEntry.SetPlaceHolder("输入快捷键组合")
 
+	showRawText := widget.NewCheck("显示原文", nil)
+	showRawText.Checked = configs.Setting.ShowRawText
+
 	defaultTray := widget.NewCheck("默认托盘", nil)
 	defaultTray.Checked = defaultTraySet
 
@@ -47,6 +50,7 @@ func createAppSettingForm() *widget.Form {
 	form.AppendItem(widget.NewFormItem("选区热键", captureEntry))
 	form.AppendItem(widget.NewFormItem("截图翻译热键", tcEntry))
 	form.AppendItem(widget.NewFormItem("截图热键", ctcEntry))
+	form.AppendItem(widget.NewFormItem("显示原文", showRawText))
 	form.AppendItem(widget.NewFormItem("启动时默认托盘", defaultTray))
 
 	form.SubmitText = "保存"
@@ -93,6 +97,7 @@ func createAppSettingForm() *widget.Form {
 		configs.Setting.HotKey.Capture = cText
 		configs.Setting.HotKey.CaptureTranslate = tcText
 		configs.Setting.HotKey.CaptureToClipboard = ctcText
+		configs.Setting.ShowRawText = showRawText.Checked
 		configs.Setting.DefaultTray = defaultTray.Checked
 		configs.WriteSettingToFile()
 
