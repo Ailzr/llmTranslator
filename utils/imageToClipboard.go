@@ -2,26 +2,23 @@ package utils
 
 import (
 	"bytes"
-	"github.com/skanehira/clipboard-image/v2"
+	"golang.design/x/clipboard"
 	"image"
 	"image/png"
 )
 
 func ImageToClipboard(img image.Image) error {
-	// 创建内存缓冲区
-	var buf bytes.Buffer
+	//初始化
+	clipboard.Init()
 
-	// 编码为PNG格式到内存
+	var buf bytes.Buffer
 	if err := png.Encode(&buf, img); err != nil {
 		return err
 	}
+	data := buf.Bytes()
 
-	// 创建io.Reader
-	reader := bytes.NewReader(buf.Bytes())
-
-	// 写入剪贴板 ✅ 关键步骤
-	if err := clipboard.Write(reader); err != nil {
-		return err
-	}
+	// 二进制数据写入剪贴板
+	// 注意：不同平台剪贴板格式可能需要额外指定 MIME 类型
+	clipboard.Write(clipboard.FmtImage, data)
 	return nil
 }

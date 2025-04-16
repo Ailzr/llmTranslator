@@ -6,8 +6,8 @@ require (
 	fyne.io/fyne/v2 v2.6.0
 	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/kbinani/screenshot v0.0.0-20250118074034-a3924b7bbc8c
-	github.com/skanehira/clipboard-image v1.0.0
 	github.com/spf13/viper v1.20.1
+	golang.design/x/clipboard v0.7.0
 	golang.design/x/hotkey v0.4.1
 	golang.org/x/image v0.24.0
 )
@@ -40,7 +40,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rymdport/portal v0.4.1 // indirect
 	github.com/sagikazarmark/locafero v0.7.0 // indirect
-	github.com/skanehira/clipboard-image/v2 v2.0.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.12.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
@@ -52,6 +51,8 @@ require (
 	github.com/yuin/goldmark v1.7.8 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
+	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect
+	golang.org/x/mobile v0.0.0-20231127183840-76ac6878050a // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
