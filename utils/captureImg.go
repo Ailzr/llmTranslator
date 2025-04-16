@@ -66,3 +66,17 @@ func SaveImgToPng(img *image.RGBA, imgName string) {
 	// 将图像保存为PNG格式
 	png.Encode(file, img)
 }
+
+func LoadPngFromTmp(imgName string) (*image.RGBA, error) {
+	fileName := fmt.Sprintf("tmp_img/%s.png", imgName)
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+	return img.(*image.RGBA), nil
+}
