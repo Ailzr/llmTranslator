@@ -92,27 +92,6 @@ func (mw *MainWindow) CaptureToClipboard() {
 	})
 }
 
-func (mw *MainWindow) CaptureAndTranslate() {
-	mw.CaptureSelectArea(func(sel image.Rectangle) {
-		fyne.Do(func() {
-			mw.CaptureWindow.Close()
-		})
-
-		go func() {
-			screen, err := utils.LoadPngFromTmp("screen")
-			if err != nil {
-				logHelper.Error(err.Error())
-				logHelper.WriteLog(err.Error())
-				return
-			}
-			subImg := screen.SubImage(sel)
-			utils.SaveImgToPng(subImg.(*image.RGBA), "tmp")
-			mw.Translate()
-		}()
-
-	})
-}
-
 func (mw *MainWindow) CaptureAndSaveSelection() {
 	mw.CaptureSelectArea(func(sel image.Rectangle) {
 		dialog.ShowConfirm("确认选区",
