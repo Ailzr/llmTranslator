@@ -45,6 +45,7 @@ func (mw *MainWindow) ShowTranslate(text string) {
 			fyne.Do(func() {
 				// 设置contentShow的文本为传入的text参数
 				contentShow.SetText(text)
+				mw.TranslatorWindow.Show()
 			})
 		} else {
 			// 如果contentShow为空，则显示一个信息对话框
@@ -60,7 +61,7 @@ func (mw *MainWindow) Translate() {
 		// 隐藏翻译窗口
 		mw.TranslatorWindow.Hide()
 		// 显示翻译中
-		mw.ShowTranslate("翻译中...")
+		//mw.ShowTranslate("翻译中...")
 		// 如果不在托盘模式下，隐藏主窗口
 		if !mw.isTray {
 			mw.Window.Hide()
@@ -97,9 +98,6 @@ func (mw *MainWindow) Translate() {
 
 		// 在fyne主线程中执行
 		fyne.Do(func() {
-			// 显示翻译窗口
-			mw.TranslatorWindow.Show()
-
 			// 如果不在托盘模式下，显示主窗口
 			if !mw.isTray {
 				mw.Window.Show()

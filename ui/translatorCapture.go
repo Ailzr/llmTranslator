@@ -16,8 +16,6 @@ import (
 	"time"
 )
 
-var bg *canvas.Image
-
 func (mw *MainWindow) CaptureSelectArea(onSelect func(image.Rectangle)) {
 	fyne.Do(func() {
 		if mw.CaptureWindow != nil {
@@ -45,7 +43,7 @@ func (mw *MainWindow) CaptureSelectArea(onSelect func(image.Rectangle)) {
 		}
 		go utils.SaveImgToPng(img, "screen")
 
-		bg = canvas.NewImageFromImage(img)
+		bg := canvas.NewImageFromImage(img)
 		bg.FillMode = canvas.ImageFillStretch
 
 		result := make(chan image.Rectangle)
@@ -97,36 +95,27 @@ func (mw *MainWindow) CaptureToClipboard() {
 }
 
 func (mw *MainWindow) CaptureAndTranslate() {
-	//TODO 有bug，需要修复，暂不可用
 	mw.CaptureSelectArea(func(sel image.Rectangle) {
+		fyne.Do(func() {
+			mw.CaptureWindow.Close()
+		})
+
 		go func() {
-			img, err := utils.CaptureImg(sel.Min, sel.Max)
+			screen, err := utils.LoadPngFromTmp("screen")
 			if err != nil {
 				logHelper.Error(err.Error())
 				logHelper.WriteLog(err.Error())
-				mw.CaptureWindow.Close()
 				return
 			}
-			utils.SaveImgToPng(img, "tmp")
-			text := ocr.GetOCRResult()
-
-			var loadingWin fyne.Window
-
-			// 创建 loading 窗口（在主线程中）
+			subImg := screen.SubImage(sel)
+			utils.SaveImgToPng(subImg.(*image.RGBA), "tmp")
+			ocrResult := ocr.GetOCRResult()
+			res := llm.Translate(ocrResult, "简体中文")
 			fyne.Do(func() {
-				loadingWin = ShowLoadingWindow()
-			})
-
-			// 模拟流式翻译（逐段返回字符串）
-			translated := llm.Translate(text, "简体中文")
-
-			// 翻译完成，绘图 + 弹出图像窗口
-			fyne.Do(func() {
-				loadingWin.Close()
-				drawImg := utils.DrawTextOnImage(img, translated)
-				ShowImageInNewWindow(drawImg)
+				mw.ShowTranslate(res)
 			})
 		}()
+
 	})
 }
 
