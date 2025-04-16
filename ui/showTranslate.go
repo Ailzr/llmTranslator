@@ -56,37 +56,7 @@ func (mw *MainWindow) ShowTranslate(text string) {
 
 // Translate函数用于翻译文本
 func (mw *MainWindow) Translate() {
-	// 在fyne主线程中执行
-	fyne.Do(func() {
-		// 隐藏翻译窗口
-		mw.TranslatorWindow.Hide()
-		// 显示翻译中
-		//mw.ShowTranslate("翻译中...")
-		// 如果不在托盘模式下，隐藏主窗口
-		if !mw.isTray {
-			mw.Window.Hide()
-		}
-	})
-
-	// 在新协程中执行翻译操作
 	go func() {
-
-		time.Sleep(300 * time.Millisecond)
-
-		// 截取屏幕图像
-		img, err := utils.CaptureImg(image.Point{X: configs.Setting.Capture.StartX, Y: configs.Setting.Capture.StartY}, image.Point{X: configs.Setting.Capture.EndX, Y: configs.Setting.Capture.EndY})
-		// 将图像保存为png格式
-		utils.SaveImgToPng(img, "tmp")
-		// 如果截取失败，记录错误并显示截图失败
-		if err != nil {
-			logHelper.Error(err.Error())
-			logHelper.WriteLog(err.Error())
-			fyne.Do(func() {
-				mw.ShowTranslate("截图失败")
-			})
-			return
-		}
-
 		// 获取OCR识别结果
 		ocrResult := ocr.GetOCRResult()
 		// 如果未识别到文字，显示未识别到文字
@@ -116,4 +86,34 @@ func (mw *MainWindow) Translate() {
 			mw.ShowTranslate(result)
 		})
 	}()
+}
+
+func hideWindowCapture() {
+	// 在fyne主线程中执行
+	fyne.Do(func() {
+		// 隐藏翻译窗口
+		mw.TranslatorWindow.Hide()
+		// 显示翻译中
+		//mw.ShowTranslate("翻译中...")
+		// 如果不在托盘模式下，隐藏主窗口
+		if !mw.isTray {
+			mw.Window.Hide()
+		}
+	})
+
+	time.Sleep(300 * time.Millisecond)
+
+	// 截取屏幕图像
+	img, err := utils.CaptureImg(image.Point{X: configs.Setting.Capture.StartX, Y: configs.Setting.Capture.StartY}, image.Point{X: configs.Setting.Capture.EndX, Y: configs.Setting.Capture.EndY})
+	// 将图像保存为png格式
+	utils.SaveImgToPng(img, "tmp")
+	// 如果截取失败，记录错误并显示截图失败
+	if err != nil {
+		logHelper.Error(err.Error())
+		logHelper.WriteLog(err.Error())
+		fyne.Do(func() {
+			mw.ShowTranslate("截图失败")
+		})
+		return
+	}
 }

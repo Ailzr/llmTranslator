@@ -38,6 +38,7 @@ func AddTranslateHotKey() {
 	} else {
 		go func() {
 			for range translateHotKey.Keydown() {
+				hideWindowCapture()
 				mw.Translate()
 			}
 		}()
