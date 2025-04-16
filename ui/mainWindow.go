@@ -62,7 +62,7 @@ func init() {
 			"主页",
 			container.NewVBox(
 				widget.NewLabel("主页"),
-				createHomeForm(mw),
+				createHomeForm(),
 			),
 		),
 		container.NewTabItem(
