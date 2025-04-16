@@ -1,6 +1,7 @@
 .idea
 logs
 tmp_img
+ocr
 configs/setting.json
 llmTranslator.exe
 packageCommand.bat

@@ -19,6 +19,7 @@ func createAppSettingForm() *widget.Form {
 	trCombo := configs.Setting.HotKey.Translate
 	cpCombo := configs.Setting.HotKey.Capture
 	tcCombo := configs.Setting.HotKey.CaptureTranslate
+	ctcCombo := configs.Setting.HotKey.CaptureToClipboard
 	defaultTraySet := configs.Setting.DefaultTray
 
 	// 构造表单控件
@@ -34,6 +35,10 @@ func createAppSettingForm() *widget.Form {
 	tcEntry.SetText(tcCombo)
 	tcEntry.SetPlaceHolder("输入快捷键组合")
 
+	ctcEntry := widget.NewEntry()
+	ctcEntry.SetText(ctcCombo)
+	ctcEntry.SetPlaceHolder("输入快捷键组合")
+
 	defaultTray := widget.NewCheck("默认托盘", nil)
 	defaultTray.Checked = defaultTraySet
 
@@ -41,6 +46,7 @@ func createAppSettingForm() *widget.Form {
 	form.AppendItem(widget.NewFormItem("框选区翻译热键", translateEntry))
 	form.AppendItem(widget.NewFormItem("选区热键", captureEntry))
 	form.AppendItem(widget.NewFormItem("截图翻译热键", tcEntry))
+	form.AppendItem(widget.NewFormItem("截图热键", ctcEntry))
 	form.AppendItem(widget.NewFormItem("启动时默认托盘", defaultTray))
 
 	form.SubmitText = "保存"
@@ -48,6 +54,7 @@ func createAppSettingForm() *widget.Form {
 		tText := strings.TrimSpace(translateEntry.Text)
 		cText := strings.TrimSpace(captureEntry.Text)
 		tcText := strings.TrimSpace(tcEntry.Text)
+		ctcText := strings.TrimSpace(ctcEntry.Text)
 
 		// 基本非空检查
 		if tText == "" || cText == "" || tcText == "" {
@@ -75,11 +82,17 @@ func createAppSettingForm() *widget.Form {
 			dialog.ShowError(fmt.Errorf("截图翻译热键格式错误：%v", err), mw.Window)
 			return
 		}
+		_, _, err = ParseHotKey(ctcText)
+		if err != nil {
+			dialog.ShowError(fmt.Errorf("截图翻译热键格式错误：%v", err), mw.Window)
+			return
+		}
 
 		// 保存到配置
 		configs.Setting.HotKey.Translate = tText
 		configs.Setting.HotKey.Capture = cText
 		configs.Setting.HotKey.CaptureTranslate = tcText
+		configs.Setting.HotKey.CaptureToClipboard = ctcText
 		configs.Setting.DefaultTray = defaultTray.Checked
 		configs.WriteSettingToFile()
 
