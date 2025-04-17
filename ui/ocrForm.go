@@ -5,7 +5,6 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"llmTranslator/configs"
-	"llmTranslator/langMap"
 	"llmTranslator/pkg/ocr"
 	"slices"
 )
@@ -21,15 +20,7 @@ func createOCRForm() *widget.Form {
 	ocrForm = &widget.Form{}
 
 	//读取配置
-	ocrLang := configs.Setting.OCR.Lang
 	ocrProvider = configs.Setting.OCR.Provider
-
-	//设置语言下拉框
-	langCombo := widget.NewSelect([]string{"日语", "英语"}, nil)
-	//根据当前设置的语言设置下拉框的选中项
-	langCombo.SetSelected(langMap.LangMap[ocrLang])
-	//将语言下拉框添加到表单中
-	ocrForm.AppendItem(widget.NewFormItem("需要翻译的语言", langCombo))
 
 	//创建API Key输入框
 	apiKeyEntry = widget.NewEntry()
@@ -58,9 +49,6 @@ func createOCRForm() *widget.Form {
 	ocrForm.SubmitText = "保存"
 	//设置表单的提交事件
 	ocrForm.OnSubmit = func() {
-		ocrLang = langMap.LangUnMap[langCombo.Selected]
-
-		configs.Setting.OCR.Lang = ocrLang
 		configs.Setting.OCR.Provider = ocrProvider
 		switch ocrProvider {
 		case "baidu":
@@ -76,7 +64,6 @@ func createOCRForm() *widget.Form {
 	//设置表单的取消事件
 	ocrForm.OnCancel = func() {
 		//重置表单
-		langCombo.SetSelected(langMap.LangUnMap[ocrLang])
 		ocrProvider = configs.Setting.OCR.Provider
 		ocrProviderCombo.SetSelected(ocrProvider)
 		go setApiInfo()

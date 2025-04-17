@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"llmTranslator/configs"
+	"llmTranslator/langMap"
 	"strings"
 )
 
@@ -38,6 +39,12 @@ func createAppSettingForm() *widget.Form {
 	ctcEntry.SetText(ctcCombo)
 	ctcEntry.SetPlaceHolder("输入快捷键组合")
 
+	//设置语言下拉框
+	sourceLangCombo := widget.NewSelect([]string{"日语", "英语", "简体中文"}, nil)
+	sourceLangCombo.SetSelected(langMap.LangMap[configs.Setting.OCR.Lang])
+	targetLangCombo := widget.NewSelect([]string{"日语", "英语", "简体中文"}, nil)
+	targetLangCombo.SetSelected(langMap.LangMap[configs.Setting.AppSetting.TargetLang])
+
 	showRawText := widget.NewCheck("显示原文", nil)
 	showRawText.Checked = configs.Setting.AppSetting.ShowRawText
 
@@ -49,6 +56,8 @@ func createAppSettingForm() *widget.Form {
 	form.AppendItem(widget.NewFormItem("选区热键", captureEntry))
 	form.AppendItem(widget.NewFormItem("截图翻译热键", tcEntry))
 	form.AppendItem(widget.NewFormItem("截图热键", ctcEntry))
+	form.AppendItem(widget.NewFormItem("需要翻译的语言", sourceLangCombo))
+	form.AppendItem(widget.NewFormItem("翻译后的语言", targetLangCombo))
 	form.AppendItem(widget.NewFormItem("显示原文", showRawText))
 	form.AppendItem(widget.NewFormItem("启动时默认托盘", defaultTray))
 
@@ -60,13 +69,8 @@ func createAppSettingForm() *widget.Form {
 		ctcText := strings.TrimSpace(ctcEntry.Text)
 
 		// 基本非空检查
-		if tText == "" || cText == "" || tcText == "" {
+		if tText == "" || cText == "" || tcText == "" || ctcText == "" {
 			dialog.ShowError(fmt.Errorf("请填写完整的组合键"), mw.Window)
-			return
-		}
-		// 冲突检测：字符串一致（忽略大小写、空格）
-		if strings.EqualFold(strings.ReplaceAll(tText, " ", ""), strings.ReplaceAll(cText, " ", "")) {
-			dialog.ShowError(fmt.Errorf("框选区翻译热键和截图热键不能相同"), mw.Window)
 			return
 		}
 		// 校验并拆分
@@ -96,6 +100,8 @@ func createAppSettingForm() *widget.Form {
 		configs.Setting.HotKey.Capture = cText
 		configs.Setting.HotKey.CaptureTranslate = tcText
 		configs.Setting.HotKey.CaptureToClipboard = ctcText
+		configs.Setting.OCR.Lang = langMap.LangUnMap[sourceLangCombo.Selected]
+		configs.Setting.AppSetting.TargetLang = langMap.LangUnMap[targetLangCombo.Selected]
 		configs.Setting.AppSetting.ShowRawText = showRawText.Checked
 		configs.Setting.AppSetting.DefaultTray = defaultTray.Checked
 		configs.WriteSettingToFile()
