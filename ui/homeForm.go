@@ -65,7 +65,7 @@ func createHomeForm() *widget.Form {
 		}
 		translateText.SetText("翻译中...")
 		go func() {
-			text := llm.Translate(translateInput.Text, "简体中文")
+			text := llm.Translate(translateInput.Text)
 			fyne.Do(func() {
 				translateText.SetText(text)
 			})

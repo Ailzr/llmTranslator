@@ -44,6 +44,7 @@ var Setting = Config{
 	AppSetting: AppSetting{
 		DefaultTray: false,
 		ShowRawText: false,
+		TargetLang:  "zh-CN",
 	},
 	Version: "1.0.0",
 }

@@ -63,8 +63,9 @@ type Baidu struct {
 }
 
 type AppSetting struct {
-	DefaultTray bool `json:"default_tray" mapstructure:"default_tray"`
-	ShowRawText bool `json:"show_raw_text" mapstructure:"show_raw_text"`
+	DefaultTray bool   `json:"default_tray" mapstructure:"default_tray"`
+	ShowRawText bool   `json:"show_raw_text" mapstructure:"show_raw_text"`
+	TargetLang  string `json:"target_lang" mapstructure:"target_lang"`
 }
 
 func createDefaultConfig() {
