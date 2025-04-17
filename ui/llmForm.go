@@ -7,7 +7,6 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"llmTranslator/configs"
-	"llmTranslator/langMap"
 	"slices"
 	"strconv"
 )
@@ -46,7 +45,7 @@ func createLLMForm() *widget.Form {
 
 	promptInput := widget.NewMultiLineEntry()
 	promptInput.Wrapping = fyne.TextWrapWord
-	promptInput.SetText(fmt.Sprintf("注: 提示词不提供修改，如果需要修改，自行在configs/setting.json中修改\n"+configs.Setting.LLM.Prompt, langMap.LangMap[configs.Setting.AppSetting.TargetLang], "{需要翻译的文本}"))
+	promptInput.SetText(fmt.Sprintf("注: 提示词不提供修改，如果需要修改，自行在configs/setting.json中修改\n"+configs.Setting.LLM.Prompt, "{目标语言，在应用设置中更改}", "{需要翻译的文本}"))
 	promptInput.SetPlaceHolder("请输入prompt")
 	promptInput.Disable()
 
