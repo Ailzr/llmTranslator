@@ -12,7 +12,6 @@ func TestConn() bool {
 		return ollamaTest()
 	default:
 		logHelper.Error("不支持的provider: ", provider)
-		logHelper.WriteLog("不支持的provider: " + provider)
 		return false
 	}
 }

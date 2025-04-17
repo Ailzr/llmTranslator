@@ -22,7 +22,6 @@ func init() {
 		err = os.Mkdir("configs", os.ModePerm)
 		if err != nil {
 			logHelper.Error("创建configs文件夹错误: %v", err)
-			logHelper.WriteLog("创建configs文件夹错误: %v", err)
 		}
 	}
 	_, err = os.Stat("configs/setting.json")
@@ -41,7 +40,6 @@ func init() {
 		err = os.Mkdir("tmp_img", os.ModePerm)
 		if err != nil {
 			logHelper.Error("创建tmp_img文件夹错误: %v", err)
-			logHelper.WriteLog("创建tmp_img文件夹错误: %v", err)
 			return
 		}
 	}

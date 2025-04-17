@@ -110,7 +110,6 @@ func hideWindowCapture() {
 	// 如果截取失败，记录错误并显示截图失败
 	if err != nil {
 		logHelper.Error(err.Error())
-		logHelper.WriteLog(err.Error())
 		fyne.Do(func() {
 			mw.ShowTranslate("截图失败")
 		})

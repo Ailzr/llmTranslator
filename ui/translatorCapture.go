@@ -36,7 +36,6 @@ func (mw *MainWindow) CaptureSelectArea(onSelect func(image.Rectangle)) {
 		img, err := utils.CaptureAllScreen()
 		if err != nil {
 			logHelper.Error(err.Error())
-			logHelper.WriteLog(err.Error())
 			return
 		}
 		go utils.SaveImgToPng(img, "screen")
@@ -72,20 +71,17 @@ func (mw *MainWindow) CaptureToClipboard() {
 		img, err := utils.LoadPngFromTmp("screen")
 		if err != nil {
 			logHelper.Error(err.Error())
-			logHelper.WriteLog(err.Error())
 			return
 		}
 		subImg := img.SubImage(image.Rect(sel.Min.X, sel.Min.Y, sel.Max.X, sel.Max.Y))
 
 		if err != nil {
 			logHelper.Error(err.Error())
-			logHelper.WriteLog(err.Error())
 			return
 		}
 		go func() {
 			if err := utils.ImageToClipboard(subImg); err != nil {
 				logHelper.Error(err.Error())
-				logHelper.WriteLog(err.Error())
 				return
 			}
 		}()

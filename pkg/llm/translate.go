@@ -25,11 +25,9 @@ func Translate(text string) string {
 		respText, err = ollamaTranslate(prompt)
 		if err != nil {
 			logHelper.Error(err.Error())
-			logHelper.WriteLog("LLM翻译时错误:" + err.Error())
 		}
 	default:
 		logHelper.Error("未知的翻译提供者")
-		logHelper.WriteLog("未知的翻译提供者")
 	}
 
 	return respText

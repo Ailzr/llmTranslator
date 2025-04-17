@@ -74,7 +74,6 @@ func checkAccessToken() bool {
 		err := getAccessToken()
 		if err != nil {
 			logHelper.Error("获取百度OCR API Token失败: %v", err)
-			logHelper.WriteLog("获取百度OCR API Token失败: %v", err)
 			return false
 		}
 	}
@@ -83,7 +82,6 @@ func checkAccessToken() bool {
 		err := getAccessToken()
 		if err != nil {
 			logHelper.Error("获取百度OCR API Token失败: %v", err)
-			logHelper.WriteLog("获取百度OCR API Token失败: %v", err)
 			return false
 		}
 	}
@@ -108,7 +106,6 @@ func ocrByBaidu(filePath string) string {
 	image, err := os.ReadFile(filePath)
 	if err != nil {
 		logHelper.Error("读取tmp.png失败: %v", err)
-		logHelper.WriteLog("读取tmp.png失败: %v", err)
 		return ""
 	}
 	// 将图片转换为base64编码
@@ -121,7 +118,6 @@ func ocrByBaidu(filePath string) string {
 	res, err := http.Post(reqUrl, "application/x-www-form-urlencoded", bytes.NewBufferString(params.Encode()))
 	if err != nil {
 		logHelper.Error("发送请求失败: %v", err)
-		logHelper.WriteLog("发送请求失败: %v", err)
 		return ""
 	}
 	defer res.Body.Close()
@@ -129,7 +125,6 @@ func ocrByBaidu(filePath string) string {
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		logHelper.Error("读取响应失败: %v", err)
-		logHelper.WriteLog("读取响应失败: %v", err)
 		return ""
 	}
 
@@ -137,7 +132,6 @@ func ocrByBaidu(filePath string) string {
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		logHelper.Error("解析响应失败: %v", err)
-		logHelper.WriteLog("解析响应失败: %v", err)
 		return ""
 	}
 

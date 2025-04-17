@@ -45,27 +45,23 @@ func ollamaTest() bool {
 
 	if err != nil {
 		logHelper.Error("API请求失败: ", err)
-		logHelper.WriteLog("API请求失败: " + err.Error())
 		return false
 	}
 
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		logHelper.Error("API返回错误: ", resp.Status)
-		logHelper.WriteLog("API返回错误: " + resp.Status)
 		return false
 	}
 
 	var result OllamaResponse
 	if err = json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		logHelper.Error("JSON解析失败: ", err)
-		logHelper.WriteLog("JSON解析失败: " + err.Error())
 		return false
 	}
 
 	if result.Error != "" {
 		logHelper.Error("模型错误: ", result.Error)
-		logHelper.WriteLog("模型错误: " + result.Error)
 		return false
 	}
 

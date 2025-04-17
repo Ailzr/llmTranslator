@@ -73,13 +73,11 @@ func createDefaultConfig() {
 	file, err := os.OpenFile("configs/setting.json", os.O_CREATE, 0666)
 	if err != nil {
 		logHelper.Error("创建配置文件错误: %v", err)
-		logHelper.WriteLog("创建配置文件错误: %v", err)
 		return
 	}
 	err = file.Close()
 	if err != nil {
 		logHelper.Error("关闭配置文件错误: %v", err)
-		logHelper.WriteLog("关闭配置文件错误: %v", err)
 		return
 	}
 
@@ -89,7 +87,6 @@ func createDefaultConfig() {
 func LoadSettingByFile() {
 	if err := viper.ReadInConfig(); err != nil {
 		logHelper.Error("读取配置文件错误: %v", err)
-		logHelper.WriteLog("读取配置文件错误: %v", err)
 		return
 	}
 	decodeHook := mapstructure.ComposeDecodeHookFunc(
@@ -97,7 +94,6 @@ func LoadSettingByFile() {
 	)
 	if err := viper.Unmarshal(&Setting, viper.DecodeHook(decodeHook)); err != nil {
 		logHelper.Error("配置解析失败: %v", err)
-		logHelper.WriteLog("配置解析失败: %v", err)
 		return
 	}
 }
@@ -106,20 +102,17 @@ func WriteSettingToFile() {
 	marshal, err := json.Marshal(Setting)
 	if err != nil {
 		logHelper.Error("创建默认配置时JSON序列化失败: %v", err)
-		logHelper.WriteLog("创建默认配置时JSON序列化失败: %v", err)
 		return
 	}
 	err = viper.ReadConfig(bytes.NewReader(marshal))
 	if err != nil {
 		logHelper.Error("创建默认配置时读取配置文件错误: %v", err)
-		logHelper.WriteLog("创建默认配置时读取配置文件错误: %v", err)
 		return
 	}
 
 	err = viper.WriteConfig()
 	if err != nil {
 		logHelper.Error("创建默认配置时写入配置文件错误: %v", err)
-		logHelper.WriteLog("创建默认配置时写入配置文件错误: %v", err)
 		return
 	}
 }

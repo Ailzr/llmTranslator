@@ -55,7 +55,6 @@ func ocrByDango(filePath string) string {
 	workDir, err := os.Getwd()
 	if err != nil {
 		logHelper.Error("获取工作目录失败: %v", err)
-		logHelper.WriteLog("获取工作目录失败: %v", err)
 		return ""
 	}
 	filePath = workDir + "/" + filePath
@@ -68,7 +67,6 @@ func ocrByDango(filePath string) string {
 	reqBody, err := json.Marshal(req)
 	if err != nil {
 		logHelper.Error("json marshal error: %v", err)
-		logHelper.WriteLog("json marshal error: %v", err)
 		return ""
 	}
 	apiURL := baseUrl + "/ocr/api"
@@ -76,7 +74,6 @@ func ocrByDango(filePath string) string {
 	res, err := http.Post(apiURL, "application/json", strings.NewReader(string(reqBody)))
 	if err != nil {
 		logHelper.Error("ocr api error: %v", err)
-		logHelper.WriteLog("ocr api error: %v", err)
 		return ""
 	}
 	defer res.Body.Close()
@@ -85,12 +82,10 @@ func ocrByDango(filePath string) string {
 	err = json.Unmarshal(body, dangoResponse)
 	if err != nil {
 		logHelper.Error("json unmarshal error: %v", err)
-		logHelper.WriteLog("json unmarshal error: %v", err)
 		return ""
 	}
 	if dangoResponse.Code != 0 {
 		logHelper.Error("ocr api error: %v", dangoResponse.Message)
-		logHelper.WriteLog("ocr api error: %v", dangoResponse.Message)
 		return ""
 	}
 

@@ -31,7 +31,6 @@ func ocrByPaddle(filePath string) string {
 	file, err := os.Open(filePath)
 	if err != nil {
 		logHelper.Error("打开文件失败: %v", err)
-		logHelper.WriteLog("打开文件失败: %v", err)
 		return ""
 	}
 	defer file.Close()
@@ -43,13 +42,11 @@ func ocrByPaddle(filePath string) string {
 	part, err := writer.CreateFormFile("image", filepath.Base(file.Name()))
 	if err != nil {
 		logHelper.Error("创建表单文件失败: %v", err)
-		logHelper.WriteLog("创建表单文件失败: %v", err)
 		return ""
 	}
 	_, err = io.Copy(part, file)
 	if err != nil {
 		logHelper.Error("写入文件内容失败: %v", err)
-		logHelper.WriteLog("写入文件内容失败: %v", err)
 		return ""
 	}
 
@@ -60,14 +57,12 @@ func ocrByPaddle(filePath string) string {
 	err = writer.Close()
 	if err != nil {
 		logHelper.Error("关闭multipart写入器失败: %v", err)
-		logHelper.WriteLog("关闭multipart写入器失败: %v", err)
 		return ""
 	}
 
 	req, err := http.NewRequest("POST", configs.Setting.OCR.BaseUrl[configs.Setting.OCR.Provider]+"/ocr", body)
 	if err != nil {
 		logHelper.Error("创建请求失败: %v", err)
-		logHelper.WriteLog("创建请求失败: %v", err)
 		return ""
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
@@ -75,7 +70,6 @@ func ocrByPaddle(filePath string) string {
 	resp, err := sendRequest(req)
 	if err != nil {
 		logHelper.Error("OCR请求失败: %v", err)
-		logHelper.WriteLog("OCR请求失败: %v", err)
 		return ""
 	}
 

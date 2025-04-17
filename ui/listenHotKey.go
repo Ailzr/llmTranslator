@@ -26,14 +26,12 @@ func AddTranslateHotKey() {
 	modKeys, key, err := ParseHotKey(tHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)
-		logHelper.WriteLog("解析热键失败: %v", err)
 		return
 	}
 	translateHotKey = hotkey.New(modKeys, key)
 	// 注册热键
 	if err = translateHotKey.Register(); err != nil {
 		logHelper.Error("注册热键失败: %v", err)
-		logHelper.WriteLog("注册热键失败: %v", err)
 		return
 	} else {
 		go func() {
@@ -50,13 +48,11 @@ func AddCaptureRectangleHotKey() {
 	modKeys, key, err := ParseHotKey(cHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)
-		logHelper.WriteLog("解析热键失败: %v", err)
 		return
 	}
 	captureHotKey = hotkey.New(modKeys, key)
 	if err = captureHotKey.Register(); err != nil {
 		logHelper.Error("注册热键失败: %v", err)
-		logHelper.WriteLog("注册热键失败: %v", err)
 		return
 	} else {
 		go func() {
@@ -72,13 +68,11 @@ func AddCaptureTranslateHotKey() {
 	modKeys, key, err := ParseHotKey(ctHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)
-		logHelper.WriteLog("解析热键失败: %v", err)
 		return
 	}
 	captureTranslateHotKey = hotkey.New(modKeys, key)
 	if err = captureTranslateHotKey.Register(); err != nil {
 		logHelper.Error("注册热键失败: %v", err)
-		logHelper.WriteLog("注册热键失败: %v", err)
 		return
 	} else {
 		go func() {
@@ -94,13 +88,11 @@ func AddCaptureImgToClipboradHotKey() {
 	modKeys, key, err := ParseHotKey(citcHotKey)
 	if err != nil {
 		logHelper.Error("解析热键失败: %v", err)
-		logHelper.WriteLog("解析热键失败: %v", err)
 		return
 	}
 	captureImgToClipboard = hotkey.New(modKeys, key)
 	if err = captureImgToClipboard.Register(); err != nil {
 		logHelper.Error("注册热键失败: %v", err)
-		logHelper.WriteLog("注册热键失败: %v", err)
 		return
 	} else {
 		go func() {
@@ -117,25 +109,21 @@ func UnregisterHotKey(closeKey string) {
 		err := translateHotKey.Unregister()
 		if err != nil {
 			logHelper.Error("注销热键失败: %v", err)
-			logHelper.WriteLog("注销热键失败: %v", err)
 		}
 	case CaptureHotKey:
 		err := captureHotKey.Unregister()
 		if err != nil {
 			logHelper.Error("注销热键失败: %v", err)
-			logHelper.WriteLog("注销热键失败: %v", err)
 		}
 	case CaptureTranslateHotKey:
 		err := captureTranslateHotKey.Unregister()
 		if err != nil {
 			logHelper.Error("注销热键失败: %v", err)
-			logHelper.WriteLog("注销热键失败: %v", err)
 		}
 	case CaptureImgToClipboardHotKey:
 		err := captureImgToClipboard.Unregister()
 		if err != nil {
 			logHelper.Error("注销热键失败: %v", err)
-			logHelper.WriteLog("注销热键失败: %v", err)
 		}
 	}
 }

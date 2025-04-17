@@ -49,7 +49,6 @@ func createOCRForm() *widget.Form {
 			if err := utils.StartupDangoOCR(); err != nil {
 				dialog.ShowError(errors.New("DangoOCR启动失败或已经启动"), mw.Window)
 				logHelper.Error("DangoOCR启动失败: %v", err)
-				logHelper.WriteLog("DangoOCR启动失败: %v", err)
 				return
 			} else {
 				time.Sleep(5 * time.Second)
@@ -62,7 +61,6 @@ func createOCRForm() *widget.Form {
 			if err := utils.StopDangoOCR(); err != nil {
 				dialog.ShowError(errors.New("DangoOCR停止失败"), mw.Window)
 				logHelper.Error("DangoOCR停止失败: %v", err)
-				logHelper.WriteLog("DangoOCR停止失败: %v", err)
 				return
 			} else {
 				dialog.ShowInformation("提示", "DangoOCR停止成功", mw.Window)

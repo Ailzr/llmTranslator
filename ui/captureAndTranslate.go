@@ -17,7 +17,6 @@ func (mw *MainWindow) CaptureAndTranslate() {
 			screen, err := utils.LoadPngFromTmp("screen")
 			if err != nil {
 				logHelper.Error(err.Error())
-				logHelper.WriteLog(err.Error())
 				return
 			}
 			subImg := screen.SubImage(sel)

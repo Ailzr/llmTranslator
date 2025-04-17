@@ -45,6 +45,7 @@ func Warn(log string, a ...any) {
 
 func Error(log string, a ...any) {
 	cmdOutput("ERROR", log, redPre, blackBack, a...)
+	WriteLog(log, a...)
 }
 
 func WriteLog(log string, a ...any) {
