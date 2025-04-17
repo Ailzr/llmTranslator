@@ -3,6 +3,7 @@ package ui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"image/color"
 	"llmTranslator/pkg/llm"
@@ -15,11 +16,9 @@ func createHomeForm() *widget.Form {
 	ocrConnLabel := canvas.NewText("", color.White)
 	llmConnLabel := canvas.NewText("", color.White)
 
-	testBtn := widget.NewButton("测试", func() {
+	testOCR := widget.NewButton("OCR测试", func() {
 		ocrConnLabel.Text = "测试中..."
 		ocrConnLabel.Color = color.White
-		llmConnLabel.Text = "测试中..."
-		llmConnLabel.Color = color.White
 
 		go func() {
 			if ocr.OCRTest() {
@@ -35,6 +34,11 @@ func createHomeForm() *widget.Form {
 			}
 		}()
 
+	})
+
+	testLLM := widget.NewButton("LLM测试", func() {
+		llmConnLabel.Text = "测试中..."
+		llmConnLabel.Color = color.White
 		go func() {
 			if llm.TestConn() {
 				fyne.Do(func() {
@@ -67,12 +71,10 @@ func createHomeForm() *widget.Form {
 			})
 		}()
 	})
-
 	form = &widget.Form{
 		Items: []*widget.FormItem{
-			{Text: "测试链接", Widget: testBtn},
-			{Text: "OCR链接状态", Widget: ocrConnLabel},
-			{Text: "LLM链接状态", Widget: llmConnLabel},
+			{Text: "测试链接", Widget: container.NewGridWithColumns(2, testOCR, testLLM)},
+			{Text: "链接状态", Widget: container.NewGridWithColumns(2, ocrConnLabel, llmConnLabel)},
 			{Text: "输入文本", Widget: translateInput},
 			{Text: "翻译", Widget: translateBtn},
 			{Text: "翻译结果", Widget: translateText},
