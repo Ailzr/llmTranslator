@@ -20,7 +20,6 @@ func createAppSettingForm() *widget.Form {
 	cpCombo := configs.Setting.HotKey.Capture
 	tcCombo := configs.Setting.HotKey.CaptureTranslate
 	ctcCombo := configs.Setting.HotKey.CaptureToClipboard
-	defaultTraySet := configs.Setting.DefaultTray
 
 	// 构造表单控件
 	translateEntry := widget.NewEntry()
@@ -40,10 +39,10 @@ func createAppSettingForm() *widget.Form {
 	ctcEntry.SetPlaceHolder("输入快捷键组合")
 
 	showRawText := widget.NewCheck("显示原文", nil)
-	showRawText.Checked = configs.Setting.ShowRawText
+	showRawText.Checked = configs.Setting.AppSetting.ShowRawText
 
 	defaultTray := widget.NewCheck("默认托盘", nil)
-	defaultTray.Checked = defaultTraySet
+	defaultTray.Checked = configs.Setting.AppSetting.DefaultTray
 
 	form.AppendItem(widget.NewFormItem("快捷键设置", remindLabel))
 	form.AppendItem(widget.NewFormItem("框选区翻译热键", translateEntry))
@@ -97,8 +96,8 @@ func createAppSettingForm() *widget.Form {
 		configs.Setting.HotKey.Capture = cText
 		configs.Setting.HotKey.CaptureTranslate = tcText
 		configs.Setting.HotKey.CaptureToClipboard = ctcText
-		configs.Setting.ShowRawText = showRawText.Checked
-		configs.Setting.DefaultTray = defaultTray.Checked
+		configs.Setting.AppSetting.ShowRawText = showRawText.Checked
+		configs.Setting.AppSetting.DefaultTray = defaultTray.Checked
 		configs.WriteSettingToFile()
 
 		// 立即重新注册热键

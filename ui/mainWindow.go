@@ -23,13 +23,13 @@ type MainWindow struct {
 
 var mw = &MainWindow{}
 
-func init() {
+func Init() {
 
 	//新建app和main window
 	mw.App = app.New()
 	//mw.App.Settings().SetTheme(&customTheme{})
 	mw.Window = mw.App.NewWindow("llmTranslator")
-	if configs.Setting.DefaultTray {
+	if configs.Setting.AppSetting.DefaultTray {
 		mw.Window.Hide()
 		mw.isTray = true
 	} else {

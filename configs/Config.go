@@ -11,14 +11,13 @@ import (
 )
 
 type Config struct {
-	Capture     Capture `json:"capture" mapstructure:"capture"`
-	LLM         LLM     `json:"llm" mapstructure:"llm"`
-	OCR         OCR     `json:"ocr" mapstructure:"ocr"`
-	UI          UI      `json:"ui" mapstructure:"ui"`
-	HotKey      HotKey  `json:"hotkey" mapstructure:"hotkey"`
-	DefaultTray bool    `json:"default_tray" mapstructure:"default_tray"`
-	ShowRawText bool    `json:"show_raw_text" mapstructure:"show_raw_text"`
-	Version     string  `json:"version" mapstructure:"version"`
+	Capture    Capture    `json:"capture" mapstructure:"capture"`
+	LLM        LLM        `json:"llm" mapstructure:"llm"`
+	OCR        OCR        `json:"ocr" mapstructure:"ocr"`
+	UI         UI         `json:"ui" mapstructure:"ui"`
+	HotKey     HotKey     `json:"hotkey" mapstructure:"hotkey"`
+	AppSetting AppSetting `json:"app_setting" mapstructure:"app_setting"`
+	Version    string     `json:"version" mapstructure:"version"`
 }
 
 type Capture struct {
@@ -61,6 +60,11 @@ type Baidu struct {
 	GenerateTime time.Time `json:"generate_time" mapstructure:"generate_time"`
 	APIKey       string    `json:"api_key" mapstructure:"api_key"`
 	APISecret    string    `json:"api_secret" mapstructure:"api_secret"`
+}
+
+type AppSetting struct {
+	DefaultTray bool `json:"default_tray" mapstructure:"default_tray"`
+	ShowRawText bool `json:"show_raw_text" mapstructure:"show_raw_text"`
 }
 
 func createDefaultConfig() {

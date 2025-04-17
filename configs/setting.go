@@ -41,7 +41,9 @@ var Setting = Config{
 		CaptureTranslate:   "Ctrl+Shift+P",
 		CaptureToClipboard: "Ctrl+Shift+Q",
 	},
-	DefaultTray: false,
-	ShowRawText: false,
-	Version:     "1.0.0",
+	AppSetting: AppSetting{
+		DefaultTray: false,
+		ShowRawText: false,
+	},
+	Version: "1.0.0",
 }

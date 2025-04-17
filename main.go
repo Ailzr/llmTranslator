@@ -6,5 +6,6 @@ import (
 )
 
 func main() {
+	ui.Init()
 	ui.ShowAndRun()
 }

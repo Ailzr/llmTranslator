@@ -76,7 +76,7 @@ func (mw *MainWindow) Translate() {
 
 		// 调用llm翻译接口，将ocr识别结果翻译为简体中文
 		result := llm.Translate(ocrResult, "简体中文")
-		if configs.Setting.ShowRawText {
+		if configs.Setting.AppSetting.ShowRawText {
 			result = ocrResult + "\n--------------分割线----------------\n" + result
 		}
 
