@@ -50,7 +50,7 @@ func createLLMForm() *widget.Form {
 	promptInput.Disable()
 
 	temperatureInput := widget.NewEntry()
-	temperatureInput.SetPlaceHolder("请输入温度，如果不知道怎么设置请不要随意改动")
+	temperatureInput.SetPlaceHolder("请输入温度，范围0~1，如果不知道怎么设置请不要随意改动")
 	temperatureInput.SetText(fmt.Sprintf("%.1f", configs.Setting.LLM.Temperature))
 
 	form.AppendItem(widget.NewFormItem("LLM提供者", providerSelector))
@@ -64,6 +64,10 @@ func createLLMForm() *widget.Form {
 		temp, err := strconv.ParseFloat(temperatureInput.Text, 32)
 		if err != nil {
 			dialog.ShowError(errors.New("温度值转换错误，保存失败"), mw.Window)
+			return
+		}
+		if temp < 0 || temp > 1 {
+			dialog.ShowError(errors.New("温度值必须在0-1之间，保存失败"), mw.Window)
 			return
 		}
 		configs.Setting.LLM.Provider = providerSelector.Selected
