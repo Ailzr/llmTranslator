@@ -5,7 +5,7 @@ import (
 )
 
 const tmpFilePath = "tmp_img/tmp.png"
-const testFilePath = "test.png"
+const testFilePath = "ocrTest/test_"
 
 var LocalOCR = []string{"paddle", "dango"}
 
@@ -25,13 +25,14 @@ func GetOCRResult() string {
 
 func OCRTest() bool {
 	provider := configs.Setting.OCR.Provider
+	testPath := testFilePath + configs.Setting.OCR.Lang + ".png"
 	switch provider {
 	case "paddle":
-		return ocrTestByPaddle(testFilePath)
+		return ocrTestByPaddle(testPath)
 	case "dango":
-		return ocrTestByDango(testFilePath)
+		return ocrTestByDango(testPath)
 	case "baidu":
-		return ocrTestByBaidu(testFilePath)
+		return ocrTestByBaidu(testPath)
 	default:
 		return false
 	}
