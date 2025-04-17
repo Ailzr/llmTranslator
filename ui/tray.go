@@ -15,7 +15,7 @@ func startTray(mw *MainWindow) {
 				mw.isTray = false
 			}))
 		desk.SetSystemTrayMenu(m)
-		desk.SetSystemTrayIcon(resourceLlmTranslatorPng)
+		desk.SetSystemTrayIcon(resourceIconPng)
 	}
 
 	// 将关闭按钮修改为隐藏

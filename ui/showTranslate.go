@@ -23,7 +23,7 @@ func (mw *MainWindow) CreateShowWindow() {
 	}
 	mw.TranslatorWindow = mw.App.NewWindow("Translator")
 
-	mw.TranslatorWindow.SetIcon(resourceLlmTranslatorPng)
+	mw.TranslatorWindow.SetIcon(resourceIconPng)
 
 	contentShow = widget.NewLabel("")
 	contentShow.Wrapping = fyne.TextWrapWord

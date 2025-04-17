@@ -42,7 +42,7 @@ func Init() {
 
 	//设置窗口大小和图标
 	mw.Window.Resize(fyne.NewSize(800, 600))
-	mw.Window.SetIcon(resourceLlmTranslatorPng)
+	mw.Window.SetIcon(resourceIconPng)
 
 	//监听ipc端口
 	var err error
