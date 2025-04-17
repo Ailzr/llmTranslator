@@ -1,11 +1,15 @@
 package ui
 
 import (
+	"errors"
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"llmTranslator/configs"
+	"llmTranslator/langMap"
 	"slices"
+	"strconv"
 )
 
 // 创建LLM表单
@@ -40,15 +44,32 @@ func createLLMForm() *widget.Form {
 	})
 	modelSelector.SetSelected(configs.Setting.LLM.Model)
 
+	promptInput := widget.NewMultiLineEntry()
+	promptInput.Wrapping = fyne.TextWrapWord
+	promptInput.SetText(fmt.Sprintf("注: 提示词不提供修改，如果需要修改，自行在configs/setting.json中修改\n"+configs.Setting.LLM.Prompt, langMap.LangMap[configs.Setting.AppSetting.TargetLang], "{需要翻译的文本}"))
+	promptInput.SetPlaceHolder("请输入prompt")
+	promptInput.Disable()
+
+	temperatureInput := widget.NewEntry()
+	temperatureInput.SetPlaceHolder("请输入温度，如果不知道怎么设置请不要随意改动")
+	temperatureInput.SetText(fmt.Sprintf("%.1f", configs.Setting.LLM.Temperature))
+
 	form.AppendItem(widget.NewFormItem("LLM提供者", providerSelector))
 	form.AppendItem(widget.NewFormItem("模型", modelSelector))
+	form.AppendItem(widget.NewFormItem("温度", temperatureInput))
 	form.AppendItem(widget.NewFormItem("自定义模型", modelInputOpen))
 	form.AppendItem(widget.NewFormItem("模型名称", modelInput))
-
+	form.AppendItem(widget.NewFormItem("提示词", promptInput))
 	form.SubmitText = "保存"
 	form.OnSubmit = func() {
+		temp, err := strconv.ParseFloat(temperatureInput.Text, 32)
+		if err != nil {
+			dialog.ShowError(errors.New("温度值转换错误，保存失败"), mw.Window)
+			return
+		}
 		configs.Setting.LLM.Provider = providerSelector.Selected
 		configs.Setting.LLM.Model = modelSelector.Selected
+		configs.Setting.LLM.Temperature = float32(temp)
 		if modelInputOpen.Checked && modelInput.Text != "" {
 			useCustomModel(modelInput, modelSelector)
 		}

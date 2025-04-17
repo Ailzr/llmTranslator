@@ -35,6 +35,7 @@ type LLM struct {
 	Provider        string            `json:"provider" mapstructure:"provider"`
 	Support         []string          `json:"support" mapstructure:"support"`
 	Temperature     float32           `json:"temperature" mapstructure:"temperature"`
+	Prompt          string            `json:"prompt" mapstructure:"prompt"`
 }
 
 type OCR struct {

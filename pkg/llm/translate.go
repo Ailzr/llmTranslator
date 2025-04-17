@@ -12,7 +12,7 @@ func Translate(text string) string {
 
 	targetLang := langMap.LangMap[configs.Setting.AppSetting.TargetLang]
 	// 构造提示词
-	prompt := fmt.Sprintf("你是一个翻译助手，将以下文本翻译成{%s}，保持专业术语准确，保留数字和专有名词，不要回复其他内容，仅回复翻译出来的文本！需要翻译的内容：\n%s", targetLang, text)
+	prompt := fmt.Sprintf(configs.Setting.LLM.Prompt, targetLang, text)
 
 	respText := ""
 	var err error
