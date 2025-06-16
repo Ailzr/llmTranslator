@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"llmTranslator/configs"
+	"llmTranslator/langMap"
 	"llmTranslator/logHelper"
 	"net/http"
 	"time"
@@ -70,7 +71,11 @@ func (o *OllamaLLM) TestLLM() bool {
 	return true
 }
 
-func (o *OllamaLLM) Translate(prompt string) (string, error) {
+func (o *OllamaLLM) Translate(text string) (string, error) {
+	//设置目标语言
+	targetLang := langMap.LangMap[configs.Setting.AppSetting.TargetLang]
+	// 构造提示词
+	prompt := fmt.Sprintf(configs.Setting.LLM.Prompt, targetLang, text)
 
 	requestBody := OllamaRequest{
 		Model:  configs.Setting.LLM.Model, // 替换实际使用的模型

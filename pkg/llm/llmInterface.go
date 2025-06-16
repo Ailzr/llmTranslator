@@ -1,6 +1,10 @@
 package llm
 
-import "fmt"
+import (
+	"fmt"
+	"llmTranslator/configs"
+	"llmTranslator/logHelper"
+)
 
 type InterfaceLLM interface {
 	Translate(text string) (string, error)
@@ -14,4 +18,28 @@ func NewLLMTool(provider string) (InterfaceLLM, error) {
 	default:
 		return nil, fmt.Errorf("不支持的LLM供应商")
 	}
+}
+
+func TestConn() bool {
+	llm, err := NewLLMTool(configs.Setting.LLM.Provider)
+	if err != nil {
+		logHelper.Error("%v", err)
+		return false
+	}
+	return llm.TestLLM()
+}
+
+func Translate(text string) string {
+	// 调用翻译函数
+	llm, err := NewLLMTool(configs.Setting.LLM.Provider)
+	if err != nil {
+		logHelper.Error("%v", err)
+		return ""
+	}
+	respText, err := llm.Translate(text)
+	if err != nil {
+		logHelper.Error("%v", err)
+		return ""
+	}
+	return respText
 }
