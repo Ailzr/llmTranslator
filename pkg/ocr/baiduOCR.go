@@ -16,14 +16,17 @@ import (
 	"time"
 )
 
+type BaiduOCR struct {
+}
+
 type BaiduOCRResponse struct {
 	WordsResult    []map[string]string `json:"words_result"`
 	WordsResultNum int                 `json:"words_result_num"`
 	LogId          int64               `json:"log_id"`
 }
 
-func ocrTestByBaidu(testFilePath string) bool {
-	if ocrByBaidu(testFilePath) == "" {
+func (b *BaiduOCR) TestOCR(testFilePath string) bool {
+	if b.GetOCR(testFilePath) == "" {
 		return false
 	}
 	return true
@@ -96,7 +99,9 @@ func jointOCRResult(ocrResult *BaiduOCRResponse) string {
 	return result
 }
 
-func ocrByBaidu(filePath string) string {
+// 根据文件路径获取OCR结果
+func (b *BaiduOCR) GetOCR(filePath string) string {
+	// 检查access token是否有效
 	if !checkAccessToken() {
 		return ""
 	}

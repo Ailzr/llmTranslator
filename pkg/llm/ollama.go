@@ -11,7 +11,8 @@ import (
 	"time"
 )
 
-const ollamaUrl = "http://localhost:11434/api/generate"
+type OllamaLLM struct {
+}
 
 // Ollama 请求结构
 type OllamaRequest struct {
@@ -33,7 +34,7 @@ type OllamaResponse struct {
 	Error    string `json:"error,omitempty"`
 }
 
-func ollamaTest() bool {
+func (o *OllamaLLM) TestLLM() bool {
 	client := &http.Client{Timeout: time.Duration(configs.Setting.LLM.MaxResponseTime) * time.Second}
 
 	jsonBody, err := json.Marshal(OllamaRequest{Model: configs.Setting.LLM.Model})
@@ -69,7 +70,7 @@ func ollamaTest() bool {
 	return true
 }
 
-func ollamaTranslate(prompt string) (string, error) {
+func (o *OllamaLLM) Translate(prompt string) (string, error) {
 
 	requestBody := OllamaRequest{
 		Model:  configs.Setting.LLM.Model, // 替换实际使用的模型

@@ -11,6 +11,9 @@ import (
 	"strings"
 )
 
+type DangoOCR struct {
+}
+
 type DangoResponse struct {
 	Code      int
 	Data      []dangoData
@@ -34,8 +37,8 @@ type dangoRequest struct {
 	Language  string
 }
 
-func ocrTestByDango(testFilePath string) bool {
-	if ocrByDango(testFilePath) == "" {
+func (d *DangoOCR) TestOCR(testFilePath string) bool {
+	if d.GetOCR(testFilePath) == "" {
 		return false
 	}
 	return true
@@ -49,7 +52,7 @@ func parseDangoResponse(dangoResponse *DangoResponse) string {
 	return result
 }
 
-func ocrByDango(filePath string) string {
+func (d *DangoOCR) GetOCR(filePath string) string {
 	baseUrl := configs.Setting.OCR.BaseUrl[configs.Setting.OCR.Provider]
 	lang := langMap.LangMapToDango[configs.Setting.OCR.Lang]
 	workDir, err := os.Getwd()

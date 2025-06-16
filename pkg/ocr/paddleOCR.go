@@ -14,20 +14,23 @@ import (
 	"time"
 )
 
+type PaddleOCR struct {
+}
+
 // API响应结构体
 type OCRResponse struct {
 	Text string `json:"text"`
 }
 
-func ocrTestByPaddle(testFilePath string) bool {
-	if ocrByPaddle(testFilePath) == "" {
+func (p *PaddleOCR) TestOCR(testFilePath string) bool {
+	if p.GetOCR(testFilePath) == "" {
 		return false
 	}
 	return true
 }
 
 // 通过文件上传调用OCR
-func ocrByPaddle(filePath string) string {
+func (p *PaddleOCR) GetOCR(filePath string) string {
 	file, err := os.Open(filePath)
 	if err != nil {
 		logHelper.Error("打开文件失败: %v", err)

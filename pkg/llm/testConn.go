@@ -6,12 +6,10 @@ import (
 )
 
 func TestConn() bool {
-	provider := configs.Setting.LLM.Provider
-	switch provider {
-	case "ollama":
-		return ollamaTest()
-	default:
-		logHelper.Error("不支持的provider: ", provider)
+	llm, err := NewLLMTool(configs.Setting.LLM.Provider)
+	if err != nil {
+		logHelper.Error("%v", err)
 		return false
 	}
+	return llm.TestLLM()
 }

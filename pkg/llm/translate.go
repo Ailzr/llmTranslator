@@ -14,21 +14,18 @@ func Translate(text string) string {
 	// 构造提示词
 	prompt := fmt.Sprintf(configs.Setting.LLM.Prompt, targetLang, text)
 
-	respText := ""
 	var err error
 
 	// 调用翻译函数
-	provider := configs.Setting.LLM.Provider
-
-	switch provider {
-	case "ollama":
-		respText, err = ollamaTranslate(prompt)
-		if err != nil {
-			logHelper.Error(err.Error())
-		}
-	default:
-		logHelper.Error("未知的翻译提供者")
+	llm, err := NewLLMTool(configs.Setting.LLM.Provider)
+	if err != nil {
+		logHelper.Error("%v", err)
+		return ""
 	}
-
+	respText, err := llm.Translate(prompt)
+	if err != nil {
+		logHelper.Error("%v", err)
+		return ""
+	}
 	return respText
 }
